@@ -122,9 +122,7 @@ use App\Http\Controllers\ProductLabelController;
 //     return view('welcome');
 // });
 
-Route::get('/test', function () {
-    dd(module_asset('LandingPage/Resources/assets/css/style.css'));
-});
+
 Route::get('/', [HomeController::class, 'Landing'])->name('landing')->middleware('setlocate');
 
 Route::get('change-languages/{lang}', [LanguageController::class, 'changelanguage'])->name('changelanguage')->middleware('setlocate');
