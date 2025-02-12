@@ -1,5 +1,8 @@
-<section class="product-listing-section {{ $option->class_name }}" style="position: relative;@if($option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif" data-index="{{ $option->order }}" data-id="{{ $option->order }}" data-value="{{ $option->id }}" data-hide="{{ $option->is_hide  }}">
-    <div class="custome_tool_bar"></div>   
+<section class="product-listing-section {{ $option->class_name }}"
+    style="position: relative;@if ($option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif"
+    data-index="{{ $option->order }}" data-id="{{ $option->order }}" data-value="{{ $option->id }}"
+    data-hide="{{ $option->is_hide }}">
+    <div class="custome_tool_bar"></div>
     <div class="product-heading-row">
         <div class="container">
             <div class=" row no-gutters">
@@ -7,9 +10,8 @@
                     <div class="filter-title">
                         <h4>Filters</h4>
                         <div class="filter-ic">
-                            <svg class="icon icon-filter" aria-hidden="true" focusable="false"
-                                role="presentation" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                fill="none">
+                            <svg class="icon icon-filter" aria-hidden="true" focusable="false" role="presentation"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
                                 <path fill-rule="evenodd"
                                     d="M4.833 6.5a1.667 1.667 0 1 1 3.334 0 1.667 1.667 0 0 1-3.334 0ZM4.05 7H2.5a.5.5 0 0 1 0-1h1.55a2.5 2.5 0 0 1 4.9 0h8.55a.5.5 0 0 1 0 1H8.95a2.5 2.5 0 0 1-4.9 0Zm11.117 6.5a1.667 1.667 0 1 0-3.334 0 1.667 1.667 0 0 0 3.334 0ZM13.5 11a2.5 2.5 0 0 1 2.45 2h1.55a.5.5 0 0 1 0 1h-1.55a2.5 2.5 0 0 1-4.9 0H2.5a.5.5 0 0 1 0-1h8.55a2.5 2.5 0 0 1 2.45-2Z"
                                     fill="currentColor"></path>
@@ -272,8 +274,10 @@
                         <div class="product-card-inner">
                             <div class="product-card-image">
                                 <a href="product.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1.png') }}" class="default-img">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1-hover.png') }}" class="hover-img">
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1.png') }}"
+                                        class="default-img">
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1-hover.png') }}"
+                                        class="hover-img">
                                 </a>
                                 <div class="new-labl">
                                     -20%
@@ -298,8 +302,7 @@
                                     </h3>
                                     <div class="product-type">100% oat seeds</div>
                                 </div>
-                                <div
-                                    class="product-content-bottom d-flex align-items-center justify-content-center">
+                                <div class="product-content-bottom d-flex align-items-center justify-content-center">
                                     <div class="price">
                                         <ins>$29.99</ins>
                                     </div>
@@ -334,8 +337,10 @@
                         <div class="product-card-inner">
                             <div class="product-card-image">
                                 <a href="product.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro2.png') }}" class="default-img">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro2-hover.png') }}" class="hover-img">
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro2.png') }}"
+                                        class="default-img">
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro2-hover.png') }}"
+                                        class="hover-img">
                                 </a>
                                 <div class="new-labl">
                                     -20%
@@ -360,8 +365,7 @@
                                     </h3>
                                     <div class="product-type">100% Polyester</div>
                                 </div>
-                                <div
-                                    class="product-content-bottom d-flex align-items-center justify-content-center">
+                                <div class="product-content-bottom d-flex align-items-center justify-content-center">
                                     <div class="price">
                                         <ins>$29.99</ins>
                                     </div>
@@ -396,8 +400,10 @@
                         <div class="product-card-inner">
                             <div class="product-card-image">
                                 <a href="product.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro3.png') }}" class="default-img">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro3-hover.png') }}" class="hover-img">
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro3.png') }}"
+                                        class="default-img">
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro3-hover.png') }}"
+                                        class="hover-img">
                                 </a>
                                 <div class="new-labl">
                                     -20%
@@ -422,8 +428,7 @@
                                     </h3>
                                     <div class="product-type">100% Cotton</div>
                                 </div>
-                                <div
-                                    class="product-content-bottom d-flex align-items-center justify-content-center">
+                                <div class="product-content-bottom d-flex align-items-center justify-content-center">
                                     <div class="price">
                                         <ins>$29.99</ins>
                                     </div>
@@ -458,8 +463,10 @@
                         <div class="product-card-inner">
                             <div class="product-card-image">
                                 <a href="product.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro4.png') }}" class="default-img">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro4-hover.png') }}" class="hover-img">
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro4.png') }}"
+                                        class="default-img">
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro4-hover.png') }}"
+                                        class="hover-img">
                                 </a>
                                 <div class="new-labl">
                                     -20%
@@ -484,8 +491,7 @@
                                     </h3>
                                     <div class="product-type">100% Leather</div>
                                 </div>
-                                <div
-                                    class="product-content-bottom d-flex align-items-center justify-content-center">
+                                <div class="product-content-bottom d-flex align-items-center justify-content-center">
                                     <div class="price">
                                         <ins>$29.99</ins>
                                     </div>
@@ -520,8 +526,10 @@
                         <div class="product-card-inner">
                             <div class="product-card-image">
                                 <a href="product.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro3.png') }}" class="default-img">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro3-hover.png') }}" class="hover-img">
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro3.png') }}"
+                                        class="default-img">
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro3-hover.png') }}"
+                                        class="hover-img">
                                 </a>
                                 <div class="new-labl">
                                     -20%
@@ -546,8 +554,7 @@
                                     </h3>
                                     <div class="product-type">100% Cotton</div>
                                 </div>
-                                <div
-                                    class="product-content-bottom d-flex align-items-center justify-content-center">
+                                <div class="product-content-bottom d-flex align-items-center justify-content-center">
                                     <div class="price">
                                         <ins>$29.99</ins>
                                     </div>

@@ -1,11 +1,15 @@
-<section class="best-product-section padding-top {{ $option->class_name }}" style="position: relative;@if($option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif" data-index="{{ $option->order }}" data-id="{{ $option->order }}" data-value="{{ $option->id }}" data-hide="{{ $option->is_hide  }}">
-    <div class="custome_tool_bar"></div>    
+<section class="best-product-section padding-top {{ $option->class_name }}"
+    style="position: relative;@if ($option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif"
+    data-index="{{ $option->order }}" data-id="{{ $option->order }}" data-value="{{ $option->id }}"
+    data-hide="{{ $option->is_hide }}">
+    <div class="custome_tool_bar"></div>
     <div class="container">
         <div class="row align-items-center res-column-reverse">
             <div class="col-md-6 col-12">
                 <div class="best-product-right-inner">
                     <div class="product-banner-image-right">
-                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/product-banner-right.png') }}" alt="product banner right">
+                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/product-banner-right.png') }}"
+                            alt="product banner right">
                     </div>
                 </div>
             </div>

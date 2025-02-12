@@ -1,24 +1,24 @@
-
 @php
     use App\Models\Utility;
     $settings = \Modules\LandingPage\Entities\LandingPageSetting::settings();
-    $logo  =  get_file('storage/uploads/landing_page_image','grocery');
+    $logo = get_file('storage/uploads/landing_page_image', 'grocery');
 
-    $sup_logo  =  get_file('storage/uploads/logo','grocery');
+    $sup_logo = get_file('storage/uploads/logo', 'grocery');
     $adminSettings = Utility::Seting();
-    $superadmin = \App\Models\Admin::where('type','superadmin')->first();
-    $setting = \App\Models\Setting::where('store_id',$superadmin->current_store)->pluck('value', 'name')->toArray();
+    $superadmin = \App\Models\User::where('type', 'super admin')->first();
+    $setting = \App\Models\Setting::where('store_id', $superadmin->current_store)->pluck('value', 'name')->toArray();
     $SITE_RTL = $setting['SITE_RTL'];
-    
-    $color = (!empty($setting['color'])) ? $setting['color'] : 'theme-3';
 
+    $color = !empty($setting['color']) ? $setting['color'] : 'theme-3';
 
 @endphp
 <!DOCTYPE html>
-<html lang="en"  dir="{{$setting['SITE_RTL'] == 'on'?'rtl':''}}">
+<html lang="en" dir="{{ $setting['SITE_RTL'] == 'on' ? 'rtl' : '' }}">
 
 <head>
-    <title>{{ \App\Models\Utility::GetValueByName('title_text',APP_THEME()) ? \App\Models\Utility::GetValueByName('title_text',APP_THEME()) : 'EcommerceGo SaaS' }}</title>
+    <title>
+        {{ \App\Models\Utility::GetValueByName('title_text', APP_THEME()) ? \App\Models\Utility::GetValueByName('title_text', APP_THEME()) : 'EcommerceGo SaaS' }}
+    </title>
     <!-- Meta -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui" />
@@ -28,19 +28,20 @@
     <meta name="author" content="Rajodiya Infotech" />
 
     <!-- Favicon icon -->
-    <link rel="icon" href="{{get_file($setting['favicon']. '?timestamp='. time(),'grocery')}}" type="image/x-icon" />
+    <link rel="icon" href="{{ get_file($setting['favicon'] . '?timestamp=' . time(), 'grocery') }}"
+        type="image/x-icon" />
 
     <!-- font css -->
-    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/fonts/tabler-icons.min.css')}}" />
-    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/fonts/feather.css')}}" />
-    <link rel="stylesheet" href="  {{ Module::asset('LandingPage:Resources/assets/fonts/fontawesome.css')}}" />
-    <link rel="stylesheet" href="{{ Module::asset('LandingPage:Resources/assets/fonts/material.css')}}" />
+    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/fonts/tabler-icons.min.css') }}" />
+    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/fonts/feather.css') }}" />
+    <link rel="stylesheet" href="  {{ Module::asset('LandingPage:Resources/assets/fonts/fontawesome.css') }}" />
+    <link rel="stylesheet" href="{{ Module::asset('LandingPage:Resources/assets/fonts/material.css') }}" />
 
     <!-- vendor css -->
-    <link rel="stylesheet" href="  {{ Module::asset('LandingPage:Resources/assets/css/style.css')}}" />
-    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/css/customizer.css')}}" />
-    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/css/landing-page.css')}}" />
-    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/css/custom.css')}}" />
+    <link rel="stylesheet" href="  {{ Module::asset('LandingPage:Resources/assets/css/style.css') }}" />
+    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/css/customizer.css') }}" />
+    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/css/landing-page.css') }}" />
+    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/css/custom.css') }}" />
 
     {{-- @if ($SITE_RTL == 'on')
     <link rel="stylesheet" href="{{ asset('assets/css/style-rtl.css') }}">
@@ -53,277 +54,285 @@
     @endif --}}
 
     @if ($SITE_RTL == 'on')
-    <link rel="stylesheet" href="{{ Module::asset('LandingPage:Resources/assets/css/style-rtl.css')}}">
+        <link rel="stylesheet" href="{{ Module::asset('LandingPage:Resources/assets/css/style-rtl.css') }}">
     @elseif ($setting['cust_darklayout'] == 'on')
-    <link rel="stylesheet" href="{{ Module::asset('LandingPage:Resources/assets/css/style-dark.css')}}">
+        <link rel="stylesheet" href="{{ Module::asset('LandingPage:Resources/assets/css/style-dark.css') }}">
     @else
-    <link rel="stylesheet" href="{{ Module::asset('LandingPage:Resources/assets/css/style.css')}}" id="main-style-link">
+        <link rel="stylesheet" href="{{ Module::asset('LandingPage:Resources/assets/css/style.css') }}"
+            id="main-style-link">
     @endif
 
 
 </head>
 @if ($setting['cust_darklayout'] == 'on')
-    <body class="{{$color}} landing-dark landing-page">
-@else
-    <body class="{{$color}} landing-page">
-@endif
-    <!-- [ Header ] start -->
-    <header class="main-header">
-        @if ($settings['topbar_status'] == 'on')
-            <div class="announcement bg-dark text-center p-2">
-                <p class="mb-0">{!! $settings['topbar_notification_msg'] !!}</p>
-            </div>
-        @endif
-        @if ($settings['menubar_status'] == 'on')
-            <div class="container">
-                <nav class="navbar navbar-expand-md  default top-nav-collapse">
-                    <div class="header-left custom-header-logo">
-                        <a class="navbar-brand bg-transparent logo" href="#">
-                            <img src="{{ $logo.'/'. $settings['site_logo'] . '?timestamp='. time() }}" class="logo" alt="logo">
-                        </a>
-                    </div>
-                    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-                        <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link active" href="#home">{{ $settings['home_title'] }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#features">{{ $settings['feature_title'] }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#plan">{{ $settings['plan_title'] }}</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#faq">{{ $settings['faq_title'] }}</a>
-                            </li>
-                            @if (is_array(json_decode($settings['menubar_page'])) || is_object(json_decode($settings['menubar_page'])))
-                                @foreach (json_decode($settings['menubar_page']) as $key => $value)
-                                    @if ($value->header == 'on')
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('custom.pages',$value->page_slug) }}">{{ $value->menubar_page_name }}</a>
-                                        </li>
-                                    @endif
-                                @endforeach
-                            @endif
-                        </ul>
-                        <button class="navbar-toggler bg-primary" type="button" data-bs-toggle="collapse"
-                            data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false"
-                            aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                    </div>
-                    <div class="ms-auto d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.login') }}" class="btn btn-outline-dark rounded"><span
-                                class="hide-mob me-2">Login</span> <i data-feather="log-in"></i></a>
-                        @if ($adminSettings['SIGNUP'] == 'on')
-                        <a href="{{ route('admin.register') }}" class="btn btn-outline-dark rounded"><span
-                                class="hide-mob me-2">Register</span> <i data-feather="user-check"></i></a>
-                        @endif
-                        <button class="navbar-toggler " type="button" data-bs-toggle="collapse"
-                            data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false"
-                            aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                    </div>
-                </nav>
-            </div>
-        @endif
 
-    </header>
-    <!-- [ Header ] End -->
-    <!-- [ Banner ] start -->
-    @if ($settings['home_status'] == 'on')
-        <section class="main-banner bg-primary" id="home">
-            <div class="container-offset">
-                <div class="row gy-3 g-0 align-items-center">
-                    <div class="col-xxl-4 col-md-6">
-                        <span class="badge py-2 px-3 bg-white text-dark rounded-pill fw-bold mb-3">
-                            {{ $settings['home_offer_text'] }}</span>
-                        <h1 class="mb-3">
-                            {{ $settings['home_heading'] }}
-                        </h1>
-                        <h6 class="mb-0">{{ $settings['home_description'] }}</h6>
-                        <div class="d-flex gap-3 mt-4 banner-btn">
-                            @if ($settings['home_live_demo_link'])
-                            <a href="{{ $settings['home_live_demo_link'] }}" class="btn btn-outline-dark">Live Demo <i
-                                    data-feather="play-circle" class="ms-2"></i></a>
-                            @endif
-                            @if ($settings['home_buy_now_link'])
+    <body class="{{ $color }} landing-dark landing-page">
+    @else
+
+        <body class="{{ $color }} landing-page">
+@endif
+<!-- [ Header ] start -->
+<header class="main-header">
+    @if ($settings['topbar_status'] == 'on')
+        <div class="p-2 text-center announcement bg-dark">
+            <p class="mb-0">{!! $settings['topbar_notification_msg'] !!}</p>
+        </div>
+    @endif
+    @if ($settings['menubar_status'] == 'on')
+        <div class="container">
+            <nav class="navbar navbar-expand-md default top-nav-collapse">
+                <div class="header-left custom-header-logo">
+                    <a class="bg-transparent navbar-brand logo" href="#">
+                        <img src="{{ $logo . '/' . $settings['site_logo'] . '?timestamp=' . time() }}" class="logo"
+                            alt="logo">
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#home">{{ $settings['home_title'] }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#features">{{ $settings['feature_title'] }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#plan">{{ $settings['plan_title'] }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#faq">{{ $settings['faq_title'] }}</a>
+                        </li>
+                        @if (is_array(json_decode($settings['menubar_page'])) || is_object(json_decode($settings['menubar_page'])))
+                            @foreach (json_decode($settings['menubar_page']) as $key => $value)
+                                @if ($value->header == 'on')
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                            href="{{ route('custom.pages', $value->page_slug) }}">{{ $value->menubar_page_name }}</a>
+                                    </li>
+                                @endif
+                            @endforeach
+                        @endif
+                    </ul>
+                    <button class="navbar-toggler bg-primary" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+                <div class="gap-2 ms-auto d-flex justify-content-end">
+                    <a href="{{ route('login.with.admin', $superadmin->current_store) }}"
+                        class="rounded btn btn-outline-dark"><span class="hide-mob me-2">Login</span> <i
+                            data-feather="log-in"></i></a>
+                    @if ($adminSettings['SIGNUP'] == 'on')
+                        <a href="{{ route('customer.register', $superadmin?->currentStore?->slug) }}"
+                            class="rounded btn btn-outline-dark"><span class="hide-mob me-2">Register</span> <i
+                                data-feather="user-check"></i></a>
+                    @endif
+                    <button class="navbar-toggler " type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    @endif
+
+</header>
+<!-- [ Header ] End -->
+<!-- [ Banner ] start -->
+@if ($settings['home_status'] == 'on')
+    <section class="main-banner bg-primary" id="home">
+        <div class="container-offset">
+            <div class="row gy-3 g-0 align-items-center">
+                <div class="col-xxl-4 col-md-6">
+                    <span class="px-3 py-2 mb-3 bg-white badge text-dark rounded-pill fw-bold">
+                        {{ $settings['home_offer_text'] }}</span>
+                    <h1 class="mb-3">
+                        {{ $settings['home_heading'] }}
+                    </h1>
+                    <h6 class="mb-0">{{ $settings['home_description'] }}</h6>
+                    <div class="gap-3 mt-4 d-flex banner-btn">
+                        @if ($settings['home_live_demo_link'])
+                            <a href="{{ $settings['home_live_demo_link'] }}" class="btn btn-outline-dark">Live Demo
+                                <i data-feather="play-circle" class="ms-2"></i></a>
+                        @endif
+                        @if ($settings['home_buy_now_link'])
                             <a href="{{ $settings['home_buy_now_link'] }}" class="btn btn-outline-dark">Buy Now <i
                                     data-feather="lock" class="ms-2"></i></a>
-                            @endif
-                        </div>
+                        @endif
                     </div>
-                    <div class="col-xxl-8 col-md-6">
-                        <div class="dash-preview">
-                            <img class="img-fluid preview-img" src="{{ $logo.'/'. $settings['home_banner'] }}" alt="">
+                </div>
+                <div class="col-xxl-8 col-md-6">
+                    <div class="dash-preview">
+                        <img class="img-fluid preview-img" src="{{ $logo . '/' . $settings['home_banner'] }}"
+                            alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="mt-4 row g-0 gy-2 align-items-center">
+                <div class="col-xxl-3">
+                    <p class="mb-0">Trusted by <b class="fw-bold">{{ $settings['home_trusted_by'] }}</b></p>
+                </div>
+                <div class="col-xxl-9">
+                    <div class="row gy-3 row-cols-9">
+                        <div class="col-auto custom-header-logo ">
+                            <img src="{{ $logo . '/' . $settings['home_logo'] }}" alt="" class="img-fluid"
+                                style="width: 130px;">
+                        </div>
+                        <div class="col-auto custom-header-logo">
+                            <img src="{{ $logo . '/' . $settings['home_logo'] }}" alt="" class="img-fluid"
+                                style="width: 130px;">
+                        </div>
+                        <div class="col-auto custom-header-logo">
+                            <img src="{{ $logo . '/' . $settings['home_logo'] }}" alt="" class="img-fluid"
+                                style="width: 130px;">
+                        </div>
+                        <div class="col-auto custom-header-logo">
+                            <img src="{{ $logo . '/' . $settings['home_logo'] }}" alt="" class="img-fluid"
+                                style="width: 130px;">
+                        </div>
+                        <div class="col-auto custom-header-logo">
+                            <img src="{{ $logo . '/' . $settings['home_logo'] }}" alt="" class="img-fluid"
+                                style="width: 130px;">
+                        </div>
+                        <div class="col-auto custom-header-logo">
+                            <img src="{{ $logo . '/' . $settings['home_logo'] }}" alt="" class="img-fluid"
+                                style="width: 130px;">
+                        </div>
+                        <div class="col-auto custom-header-logo">
+                            <img src="{{ $logo . '/' . $settings['home_logo'] }}" alt="" class="img-fluid"
+                                style="width: 130px;">
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="container">
-                <div class="row g-0 gy-2 mt-4 align-items-center">
-                    <div class="col-xxl-3">
-                        <p class="mb-0">Trusted by <b class="fw-bold">{{ $settings['home_trusted_by'] }}</b></p>
+        </div>
+    </section>
+@endif
+<!-- [ Banner ] start -->
+<!-- [ features ] start -->
+@if ($settings['feature_status'] == 'on')
+    <section class="features-section section-gap bg-dark" id="features">
+        <div class="container">
+            <div class="row gy-3">
+                <div class="col-xxl-4">
+                    <span class="mb-2 d-block text-uppercase">{{ $settings['feature_title'] }}</span>
+                    <div class="mb-4 title">
+                        <h2><b class="fw-bold">{!! $settings['feature_heading'] !!}</b></h2>
                     </div>
-                    <div class="col-xxl-9">
-                        <div class="row gy-3 row-cols-9">
-                            <div class="col-auto custom-header-logo ">
-                                <img src="{{ $logo.'/'. $settings['home_logo'] }}" alt="" class="img-fluid"
-                                    style="width: 130px;">
-                            </div>
-                            <div class="col-auto custom-header-logo">
-                                <img src="{{ $logo.'/'. $settings['home_logo'] }}" alt="" class="img-fluid"
-                                    style="width: 130px;">
-                            </div>
-                            <div class="col-auto custom-header-logo">
-                                <img src="{{ $logo.'/'. $settings['home_logo'] }}" alt="" class="img-fluid"
-                                    style="width: 130px;">
-                            </div>
-                            <div class="col-auto custom-header-logo">
-                                <img src="{{ $logo.'/'. $settings['home_logo'] }}" alt="" class="img-fluid"
-                                    style="width: 130px;">
-                            </div>
-                            <div class="col-auto custom-header-logo">
-                                <img src="{{ $logo.'/'. $settings['home_logo'] }}" alt="" class="img-fluid"
-                                    style="width: 130px;">
-                            </div>
-                            <div class="col-auto custom-header-logo">
-                                <img src="{{ $logo.'/'. $settings['home_logo'] }}" alt="" class="img-fluid"
-                                    style="width: 130px;">
-                            </div>
-                            <div class="col-auto custom-header-logo">
-                                <img src="{{ $logo.'/'. $settings['home_logo'] }}" alt="" class="img-fluid"
-                                    style="width: 130px;">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    @endif
-    <!-- [ Banner ] start -->
-    <!-- [ features ] start -->
-    @if ($settings['feature_status'] == 'on')
-        <section class="features-section section-gap bg-dark" id="features">
-            <div class="container">
-                <div class="row gy-3">
-                    <div class="col-xxl-4">
-                        <span class="d-block mb-2 text-uppercase">{{ $settings['feature_title'] }}</span>
-                        <div class="title mb-4">
-                            <h2><b class="fw-bold">{!! $settings['feature_heading'] !!}</b></h2>
-                        </div>
-                        <p class="mb-3">{!! $settings['feature_description'] !!}</p>
-                        @if ($settings['feature_buy_now_link'])
+                    <p class="mb-3">{!! $settings['feature_description'] !!}</p>
+                    @if ($settings['feature_buy_now_link'])
                         <a href="{{ $settings['feature_buy_now_link'] }}"
                             class="btn btn-primary rounded-pill d-inline-flex align-items-center">Buy Now <i
                                 data-feather="lock" class="ms-2"></i></a>
-                        @endif
-                    </div>
-                    <div class="col-xxl-8">
-                        <div class="row">
-                            @if (is_array(json_decode($settings['feature_of_features'], true)) ||
-                            is_object(json_decode($settings['feature_of_features'], true)))
+                    @endif
+                </div>
+                <div class="col-xxl-8">
+                    <div class="row">
+                        @if (is_array(json_decode($settings['feature_of_features'], true)) ||
+                                is_object(json_decode($settings['feature_of_features'], true)))
                             @foreach (json_decode($settings['feature_of_features'], true) as $key => $value)
-                            <div class="col-lg-4 col-sm-6 d-flex">
-                                <div class="card {{ $key == 0 ? 'bg-primary' : '' }}">
-                                    <div class="card-body">
-                                        <span class="theme-avtar avtar avtar-xl mb-4">
-                                            <img src="{{ $logo.'/'. $value['feature_logo'] }}" alt="">
-                                        </span>
-                                        <h3 class="mb-3 {{ $key == 0 ? '' : 'text-white' }}">{!! $value['feature_heading']
-                                            !!}</h3>
-                                        <p class=" f-w-600 mb-0 {{ $key == 0 ? 'text-body' : '' }}">{!!
-                                            $value['feature_description'] !!}</p>
+                                <div class="col-lg-4 col-sm-6 d-flex">
+                                    <div class="card {{ $key == 0 ? 'bg-primary' : '' }}">
+                                        <div class="card-body">
+                                            <span class="mb-4 theme-avtar avtar avtar-xl">
+                                                <img src="{{ $logo . '/' . $value['feature_logo'] }}" alt="">
+                                            </span>
+                                            <h3 class="mb-3 {{ $key == 0 ? '' : 'text-white' }}">
+                                                {!! $value['feature_heading'] !!}</h3>
+                                            <p class=" f-w-600 mb-0 {{ $key == 0 ? 'text-body' : '' }}">
+                                                {!! $value['feature_description'] !!}</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             @endforeach
-                            @endif
-                        </div>
+                        @endif
                     </div>
-                    <div class="mt-5">
-                        <div class="title text-center mb-4">
-                            <span class="d-block mb-2 text-uppercase">{{ $settings['feature_title'] }}</span>
-                            <h2 class="mb-4">{!! $settings['highlight_feature_heading'] !!}</h2>
-                            <p>{!! $settings['highlight_feature_description'] !!}</p>
-                        </div>
-                        <div class="features-preview">
-                            <img class="img-fluid m-auto d-block"
-                                src="{{ $logo.'/'. $settings['highlight_feature_image'] }}" alt="">
-                        </div>
+                </div>
+                <div class="mt-5">
+                    <div class="mb-4 text-center title">
+                        <span class="mb-2 d-block text-uppercase">{{ $settings['feature_title'] }}</span>
+                        <h2 class="mb-4">{!! $settings['highlight_feature_heading'] !!}</h2>
+                        <p>{!! $settings['highlight_feature_description'] !!}</p>
+                    </div>
+                    <div class="features-preview">
+                        <img class="m-auto img-fluid d-block"
+                            src="{{ $logo . '/' . $settings['highlight_feature_image'] }}" alt="">
                     </div>
                 </div>
             </div>
-        </section>
-    @endif
-    <!-- [ features ] start -->
-    <!-- [ element ] start -->
-    @if ($settings['feature_status'] == 'on')
-        <section class="element-section  section-gap ">
-            <div class="container">
-                @if (is_array(json_decode($settings['other_features'], true)) ||
-                is_object(json_decode($settings['other_features'], true)))
+        </div>
+    </section>
+@endif
+<!-- [ features ] start -->
+<!-- [ element ] start -->
+@if ($settings['feature_status'] == 'on')
+    <section class="element-section section-gap ">
+        <div class="container">
+            @if (is_array(json_decode($settings['other_features'], true)) ||
+                    is_object(json_decode($settings['other_features'], true)))
                 @foreach (json_decode($settings['other_features'], true) as $key => $value)
-
-                @if ($key % 2 == 0)
-                <div class="row align-items-center justify-content-center mb-4">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="title mb-4">
-                            <span class="d-block fw-bold mb-2 text-uppercase">Features</span>
-                            <h2>
-                                {!! $value['other_features_heading'] !!}
-                            </h2>
+                    @if ($key % 2 == 0)
+                        <div class="mb-4 row align-items-center justify-content-center">
+                            <div class="col-lg-4 col-md-6">
+                                <div class="mb-4 title">
+                                    <span class="mb-2 d-block fw-bold text-uppercase">Features</span>
+                                    <h2>
+                                        {!! $value['other_features_heading'] !!}
+                                    </h2>
+                                </div>
+                                <p class="mb-3">{!! $value['other_featured_description'] !!}</p>
+                                <a href="{{ $value['other_feature_buy_now_link'] }}"
+                                    class="btn btn-primary rounded-pill d-inline-flex align-items-center">Buy Now <i
+                                        data-feather="lock" class="ms-2"></i></a>
+                            </div>
+                            <div class="col-lg-7 col-md-6 res-img">
+                                <div class="img-wrapper">
+                                    <img src="{{ $logo . '/' . $value['other_features_image'] }}" alt=""
+                                        class="img-fluid header-img">
+                                </div>
+                            </div>
                         </div>
-                        <p class="mb-3">{!! $value['other_featured_description'] !!}</p>
-                        <a href="{{ $value['other_feature_buy_now_link'] }}"
-                            class="btn btn-primary rounded-pill d-inline-flex align-items-center">Buy Now <i
-                                data-feather="lock" class="ms-2"></i></a>
-                    </div>
-                    <div class="col-lg-7 col-md-6 res-img">
-                        <div class="img-wrapper">
-                            <img src="{{ $logo.'/'. $value['other_features_image'] }}" alt="" class="img-fluid header-img">
+                    @else
+                        <div class="mb-4 row align-items-center justify-content-center">
+                            <div class="col-lg-7 col-md-6 m-bottom-img">
+                                <div class="img-wrapper">
+                                    <img src="{{ $logo . '/' . $value['other_features_image'] }}" alt=""
+                                        class="img-fluid header-img">
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6">
+                                <div class="mb-4 title">
+                                    <span class="mb-2 d-block fw-bold text-uppercase">Features</span>
+                                    <h2>
+                                        {!! $value['other_features_heading'] !!}
+                                    </h2>
+                                </div>
+                                <p class="mb-3">{!! $value['other_featured_description'] !!}</p>
+                                <a href="{{ $value['other_feature_buy_now_link'] }}"
+                                    class="btn btn-primary rounded-pill d-inline-flex align-items-center">Buy Now <i
+                                        data-feather="lock" class="ms-2"></i></a>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                @else
-                <div class="row align-items-center justify-content-center mb-4">
-                    <div class="col-lg-7 col-md-6 m-bottom-img">
-                        <div class="img-wrapper">
-                            <img src="{{ $logo.'/'. $value['other_features_image'] }}" alt="" class="img-fluid header-img">
-                        </div>
-                    </div>
-                    <div class="col-lg-4  col-md-6">
-                        <div class="title mb-4">
-                            <span class="d-block fw-bold mb-2 text-uppercase">Features</span>
-                            <h2>
-                                {!! $value['other_features_heading'] !!}
-                            </h2>
-                        </div>
-                        <p class="mb-3">{!! $value['other_featured_description'] !!}</p>
-                        <a href="{{ $value['other_feature_buy_now_link'] }}"
-                            class="btn btn-primary rounded-pill d-inline-flex align-items-center">Buy Now <i
-                                data-feather="lock" class="ms-2"></i></a>
-                    </div>
-                </div>
-                @endif
-
+                    @endif
                 @endforeach
-                @endif
+            @endif
 
-            </div>
-        </section>
-    @endif
+        </div>
+    </section>
+@endif
 
-    <!-- [ element ] end -->
-    <!-- [ element ] start -->
-    @if ($settings['discover_status'] == 'on')
+<!-- [ element ] end -->
+<!-- [ element ] start -->
+@if ($settings['discover_status'] == 'on')
     <section class="bg-dark section-gap">
         <div class="container">
-            <div class="row mb-2 justify-content-center">
+            <div class="mb-2 row justify-content-center">
                 <div class="col-xxl-6">
-                    <div class="title text-center mb-4">
-                        <span class="d-block mb-2 text-uppercase">DISCOVER</span>
+                    <div class="mb-4 text-center title">
+                        <span class="mb-2 d-block text-uppercase">DISCOVER</span>
                         <h2 class="mb-4">{!! $settings['discover_heading'] !!}</h2>
                         <p>{!! $settings['discover_description'] !!}</p>
                     </div>
@@ -331,115 +340,119 @@
             </div>
             <div class="row">
                 @if (is_array(json_decode($settings['discover_of_features'], true)) ||
-                is_object(json_decode($settings['discover_of_features'], true)))
-                @foreach (json_decode($settings['discover_of_features'], true) as $key => $value)
-                <div class="col-xxl-3 col-sm-6 col-lg-4 ">
-                    <div class="card   border {{ $key == 1 ? "bg-primary" : "bg-transparent" }}">
-                        <div class="card-body text-center">
-                            <span class="theme-avtar avtar avtar-xl mx-auto mb-4">
-                                <img src="{{ $logo.'/'. $value['discover_logo'] }}" alt="">
-                            </span>
-                            <h3 class="mb-3 {{ $key == 1 ? "" : "text-white" }} ">{!! $value['discover_heading'] !!}
-                            </h3>
-                            <p class="{{ $key == 1 ? "text-body" : "" }}">
-                                {!! $value['discover_description'] !!}
-                            </p>
+                        is_object(json_decode($settings['discover_of_features'], true)))
+                    @foreach (json_decode($settings['discover_of_features'], true) as $key => $value)
+                        <div class="col-xxl-3 col-sm-6 col-lg-4 ">
+                            <div class="card   border {{ $key == 1 ? 'bg-primary' : 'bg-transparent' }}">
+                                <div class="text-center card-body">
+                                    <span class="mx-auto mb-4 theme-avtar avtar avtar-xl">
+                                        <img src="{{ $logo . '/' . $value['discover_logo'] }}" alt="">
+                                    </span>
+                                    <h3 class="mb-3 {{ $key == 1 ? '' : 'text-white' }} ">{!! $value['discover_heading'] !!}
+                                    </h3>
+                                    <p class="{{ $key == 1 ? 'text-body' : '' }}">
+                                        {!! $value['discover_description'] !!}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                @endforeach
+                    @endforeach
                 @endif
 
             </div>
-            <div class="d-flex flex-column justify-content-center flex-sm-row gap-3 mt-3">
+            <div class="gap-3 mt-3 d-flex flex-column justify-content-center flex-sm-row">
                 @if ($settings['discover_live_demo_link'])
-                <a href="{{ $settings['discover_live_demo_link'] }}" class="btn btn-outline-light rounded-pill">Live
-                    Demo <i data-feather="play-circle" class="ms-2"></i> </a>
+                    <a href="{{ $settings['discover_live_demo_link'] }}"
+                        class="btn btn-outline-light rounded-pill">Live
+                        Demo <i data-feather="play-circle" class="ms-2"></i> </a>
                 @endif
 
                 @if ($settings['discover_buy_now_link'])
-                <a href="{{ $settings['discover_buy_now_link'] }}" class="btn btn-primary rounded-pill">Buy Now <i
-                        data-feather="lock" class="ms-2"></i> </a>
+                    <a href="{{ $settings['discover_buy_now_link'] }}" class="btn btn-primary rounded-pill">Buy Now
+                        <i data-feather="lock" class="ms-2"></i> </a>
                 @endif
             </div>
         </div>
     </section>
-    @endif
-    <!-- [ element ] end -->
-    <!-- [ Screenshots ] start -->
-    @if ($settings['screenshots_status'] == 'on')
+@endif
+<!-- [ element ] end -->
+<!-- [ Screenshots ] start -->
+@if ($settings['screenshots_status'] == 'on')
     <section class="screenshots section-gap">
         <div class="container">
-            <div class="row mb-2 justify-content-center">
+            <div class="mb-2 row justify-content-center">
                 <div class="col-xxl-6">
-                    <div class="title text-center mb-4">
-                        <span class="d-block mb-2 fw-bold text-uppercase">SCREENSHOTS</span>
+                    <div class="mb-4 text-center title">
+                        <span class="mb-2 d-block fw-bold text-uppercase">SCREENSHOTS</span>
                         <h2 class="mb-4">{!! $settings['screenshots_heading'] !!}</h2>
                         <p>{!! $settings['screenshots_description'] !!}</p>
                     </div>
                 </div>
             </div>
             <div class="row gy-4 gx-4">
-                @if (is_array(json_decode($settings['screenshots'], true)) ||
-                is_object(json_decode($settings['screenshots'], true)))
-                @foreach (json_decode($settings['screenshots'], true) as $value)
-                <div class="col-md-4 col-sm-6">
-                    <div class="screenshot-card">
-                        <div class="img-wrapper">
-                            <img src="{{ $logo.'/'.$value['screenshots'] }}" class="img-fluid header-img mb-4 shadow-sm"
-                                alt="">
+                @if (is_array(json_decode($settings['screenshots'], true)) || is_object(json_decode($settings['screenshots'], true)))
+                    @foreach (json_decode($settings['screenshots'], true) as $value)
+                        <div class="col-md-4 col-sm-6">
+                            <div class="screenshot-card">
+                                <div class="img-wrapper">
+                                    <img src="{{ $logo . '/' . $value['screenshots'] }}"
+                                        class="mb-4 shadow-sm img-fluid header-img" alt="">
+                                </div>
+                                <h5 class="mb-0">{!! $value['screenshots_heading'] !!}</h5>
+                            </div>
                         </div>
-                        <h5 class="mb-0">{!! $value['screenshots_heading'] !!}</h5>
-                    </div>
-                </div>
-                @endforeach
+                    @endforeach
                 @endif
             </div>
         </div>
     </section>
-    @endif
-    <!-- [ Screenshots ] start -->
-    <!-- [ subscription ] start -->
-    @if ($settings['plan_status'])
-        <section class="subscription bg-primary section-gap" id="plan">
-            <div class="container">
-                <div class="row mb-2 justify-content-center">
-                    <div class="col-xxl-6">
-                        <div class="title text-center mb-4">
-                            <span class="d-block mb-2 fw-bold text-uppercase">PLAN</span>
-                            <h2 class="mb-4">{!! $settings['plan_heading'] !!}</h2>
-                            <p>{!! $settings['plan_description'] !!}</p>
-                        </div>
+@endif
+<!-- [ Screenshots ] start -->
+<!-- [ subscription ] start -->
+@if ($settings['plan_status'])
+    <section class="subscription bg-primary section-gap" id="plan">
+        <div class="container">
+            <div class="mb-2 row justify-content-center">
+                <div class="col-xxl-6">
+                    <div class="mb-4 text-center title">
+                        <span class="mb-2 d-block fw-bold text-uppercase">PLAN</span>
+                        <h2 class="mb-4">{!! $settings['plan_heading'] !!}</h2>
+                        <p>{!! $settings['plan_description'] !!}</p>
                     </div>
                 </div>
-                <div class="row justify-content-center">
-                    @php
+            </div>
+            <div class="row justify-content-center">
+                @php
                     $collection = \App\Models\Plan::take(3)->orderBy('price', 'ASC')->get();
-                    @endphp
-                    @foreach ($collection as $key => $value)
+                @endphp
+                @foreach ($collection as $key => $value)
                     <div class="col-xxl-3 col-lg-4 col-md-6">
-                        <div class="card price-card shadow-none bg-white {{ $key == 1 ? 'bg-light-primary' : ''}} {{ $key == 2 ? 'bg-dark' : ""  }}">
+                        <div
+                            class="card price-card shadow-none bg-white {{ $key == 1 ? 'bg-light-primary' : '' }} {{ $key == 2 ? 'bg-dark' : '' }}">
                             <div class="card-body">
-                                <span class="price-badge bg-white text-success">{{ $value->name }}</span>
-                                <span class="mb-4 f-w-600 p-price">{{!empty($adminSettings['CURRENCY'])?$adminSettings['CURRENCY'] : '$'}}{{ $value->price }}<small
+                                <span class="bg-white price-badge text-success">{{ $value->name }}</span>
+                                <span
+                                    class="mb-4 f-w-600 p-price">{{ !empty($adminSettings['CURRENCY']) ? $adminSettings['CURRENCY'] : '$' }}{{ $value->price }}<small
                                         class="text-sm">/{{ $value->duration }}</small></span>
                                 <p>
                                     {!! $value->description !!}
                                 </p>
-                                <ul class="list-unstyled my-3">
+                                <ul class="my-3 list-unstyled">
                                     <li>
                                         <div class="form-check text-start">
-                                            <input class="form-check-input input-primary" type="checkbox" id="customCheckc1"
-                                                {{ $value->max_stores != 0 ? 'checked' : "" }}>
-                                            <label class="form-check-label" for="customCheckc1">{{ $value->max_stores }}
+                                            <input class="form-check-input input-primary" type="checkbox"
+                                                id="customCheckc1" {{ $value->max_stores != 0 ? 'checked' : '' }}>
+                                            <label class="form-check-label"
+                                                for="customCheckc1">{{ $value->max_stores }}
                                                 Store</label>
                                         </div>
                                     </li>
                                     <li>
                                         <div class="form-check text-start">
-                                            <input class="form-check-input input-primary" type="checkbox" id="customCheckc1"
-                                                {{ $value->max_products != 0 ? 'checked' : "" }}>
-                                            <label class="form-check-label" for="customCheckc1">{{ $value->max_products }}
+                                            <input class="form-check-input input-primary" type="checkbox"
+                                                id="customCheckc1" {{ $value->max_products != 0 ? 'checked' : '' }}>
+                                            <label class="form-check-label"
+                                                for="customCheckc1">{{ $value->max_products }}
                                                 Products</label>
                                         </div>
                                     </li>
@@ -454,19 +467,22 @@
 
                                     <li>
                                         <div class="form-check text-start">
-                                            <input class="form-check-input input-primary" type="checkbox" id="customCheckc1"
-                                                {{ $value->enable_custdomain != 'off' ? 'checked' : "" }}>
+                                            <input class="form-check-input input-primary" type="checkbox"
+                                                id="customCheckc1"
+                                                {{ $value->enable_custdomain != 'off' ? 'checked' : '' }}>
                                             <label class="form-check-label"
-                                                for="customCheckc1">{{ $value->enable_custdomain =='on' ? 'Enable' : 'Disable' }}
+                                                for="customCheckc1">{{ $value->enable_custdomain == 'on' ? 'Enable' : 'Disable' }}
                                                 Custom Domain</label>
                                         </div>
                                     </li>
                                     <li>
                                         <div class="form-check text-start">
-                                            <input class="form-check-input input-primary" type="checkbox" id="customCheckc1"
-                                                {{ $value->enable_custsubdomain != 'off' ? 'checked' : "" }}>
+                                            <input class="form-check-input input-primary" type="checkbox"
+                                                id="customCheckc1"
+                                                {{ $value->enable_custsubdomain != 'off' ? 'checked' : '' }}>
                                             <label class="form-check-label"
-                                                for="customCheckc1">{{ $value->enable_custsubdomain =='on' ? 'Enable' : 'Disable' }} Sub Domain</label>
+                                                for="customCheckc1">{{ $value->enable_custsubdomain == 'on' ? 'Enable' : 'Disable' }}
+                                                Sub Domain</label>
                                         </div>
                                     </li>
                                     {{-- <li>
@@ -496,118 +512,124 @@
                                     </li> --}}
                                     <li>
                                         <div class="form-check text-start">
-                                            <input class="form-check-input input-primary" type="checkbox" id="customCheckc1"
-                                                {{ $value->pwa_store != 'off' ? 'checked' : "" }}>
+                                            <input class="form-check-input input-primary" type="checkbox"
+                                                id="customCheckc1" {{ $value->pwa_store != 'off' ? 'checked' : '' }}>
                                             <label class="form-check-label"
-                                                for="customCheckc1">{{ $value->pwa_store =='on' ? 'Enable' : 'Disable' }} Progressive Web App (PWA)</label>
+                                                for="customCheckc1">{{ $value->pwa_store == 'on' ? 'Enable' : 'Disable' }}
+                                                Progressive Web App (PWA)</label>
                                         </div>
                                     </li>
                                     <li>
                                         <div class="form-check text-start">
-                                            <input class="form-check-input input-primary" type="checkbox" id="customCheckc1"
-                                                {{ $value->enable_chatgpt != 'off' ? 'checked' : "" }}>
+                                            <input class="form-check-input input-primary" type="checkbox"
+                                                id="customCheckc1"
+                                                {{ $value->enable_chatgpt != 'off' ? 'checked' : '' }}>
                                             <label class="form-check-label"
-                                                for="customCheckc1">{{ $value->enable_chatgpt == 'on' ? 'Enable' : 'Disable' }} Chatgpt</label>
+                                                for="customCheckc1">{{ $value->enable_chatgpt == 'on' ? 'Enable' : 'Disable' }}
+                                                Chatgpt</label>
                                         </div>
                                     </li>
 
                                 </ul>
                                 @if ($adminSettings['SIGNUP'] == 'on')
                                     <div class="d-grid">
-                                        <a href="{{ route('admin.register') }}" class="btn btn-primary rounded-pill">Start with
+                                        <a href="{{ route('customer.register', $superadmin?->currentStore?->slug) }}"
+                                            class="btn btn-primary rounded-pill">Start with
                                             Starter <i data-feather="log-in" class="ms-2"></i> </a>
                                     </div>
                                 @endif
                             </div>
                         </div>
                     </div>
-                    @endforeach
+                @endforeach
 
+            </div>
+        </div>
+    </section>
+@endif
+<!-- [ subscription ] end -->
+<!-- [ FAqs ] start -->
+
+@if ($settings['faq_status'] == 'on')
+    <section class="bg-gray-100 faqs section-gap" id="faq">
+        <div class="container">
+            <div class="mb-2 row">
+                <div class="col-xxl-6">
+                    <div class="mb-4 title">
+                        <span class="mb-2 d-block fw-bold text-uppercase">{{ $settings['faq_title'] }}</span>
+                        <h2 class="mb-4">{!! $settings['faq_heading'] !!}</h2>
+                        <p>{!! $settings['faq_description'] !!}</p>
+                    </div>
                 </div>
             </div>
-        </section>
-    @endif
-    <!-- [ subscription ] end -->
-    <!-- [ FAqs ] start -->
-
-    @if ($settings['faq_status'] == 'on')
-        <section class="faqs section-gap bg-gray-100" id="faq">
-            <div class="container">
-                <div class="row mb-2">
-                    <div class="col-xxl-6">
-                        <div class="title mb-4">
-                            <span class="d-block mb-2 fw-bold text-uppercase">{{ $settings['faq_title'] }}</span>
-                            <h2 class="mb-4">{!! $settings['faq_heading'] !!}</h2>
-                            <p>{!! $settings['faq_description'] !!}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="accordion accordion-flush" id="accordionFlushExample">
-                            @if (is_array(json_decode($settings['faqs'], true)) || is_object(json_decode($settings['faqs'],true)))
-                                @foreach (json_decode($settings['faqs'], true) as $key => $value)
-                                    @if ($key % 2 == 0)
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id="{{ 'flush-heading'.$key }}">
-                                                <button class="accordion-button collapsed fw-bold" type="button"
-                                                    data-bs-toggle="collapse" data-bs-target="{{ '#flush-'.$key }}"
-                                                    aria-expanded="false" aria-controls="{{ 'flush-collapse'.$key }}">
-                                                    {!! $value['faq_questions'] !!}
-                                                </button>
-                                            </h2>
-                                            <div id="{{ 'flush-'.$key }}" class="accordion-collapse collapse"
-                                                aria-labelledby="{{ 'flush-heading'.$key }}" data-bs-parent="#accordionFlushExample">
-                                                <div class="accordion-body">
-                                                    {!! $value['faq_answer'] !!}
-                                                </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        @if (is_array(json_decode($settings['faqs'], true)) || is_object(json_decode($settings['faqs'], true)))
+                            @foreach (json_decode($settings['faqs'], true) as $key => $value)
+                                @if ($key % 2 == 0)
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="{{ 'flush-heading' . $key }}">
+                                            <button class="accordion-button collapsed fw-bold" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="{{ '#flush-' . $key }}"
+                                                aria-expanded="false" aria-controls="{{ 'flush-collapse' . $key }}">
+                                                {!! $value['faq_questions'] !!}
+                                            </button>
+                                        </h2>
+                                        <div id="{{ 'flush-' . $key }}" class="accordion-collapse collapse"
+                                            aria-labelledby="{{ 'flush-heading' . $key }}"
+                                            data-bs-parent="#accordionFlushExample">
+                                            <div class="accordion-body">
+                                                {!! $value['faq_answer'] !!}
                                             </div>
                                         </div>
-                                    @endif
-                                @endforeach
-                            @endif
+                                    </div>
+                                @endif
+                            @endforeach
+                        @endif
 
-                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="accordion accordion-flush" id="accordionFlushExample2">
-                            @if (is_array(json_decode($settings['faqs'], true)) || is_object(json_decode($settings['faqs'],true)))
-                                @foreach (json_decode($settings['faqs'], true) as $key => $value)
-                                    @if ($key % 2 != 0)
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id="{{ 'flush-heading'.$key }}">
-                                                <button class="accordion-button collapsed fw-bold" type="button"
-                                                    data-bs-toggle="collapse" data-bs-target="{{ '#flush-'.$key }}"
-                                                    aria-expanded="false" aria-controls="{{ 'flush-collapse'.$key }}">
-                                                    {!! $value['faq_questions'] !!}
-                                                </button>
-                                            </h2>
-                                            <div id="{{ 'flush-'.$key }}" class="accordion-collapse collapse"
-                                                aria-labelledby="{{ 'flush-heading'.$key }}" data-bs-parent="#accordionFlushExample2">
-                                                <div class="accordion-body">
-                                                    {!! $value['faq_answer'] !!}
-                                                </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="accordion accordion-flush" id="accordionFlushExample2">
+                        @if (is_array(json_decode($settings['faqs'], true)) || is_object(json_decode($settings['faqs'], true)))
+                            @foreach (json_decode($settings['faqs'], true) as $key => $value)
+                                @if ($key % 2 != 0)
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="{{ 'flush-heading' . $key }}">
+                                            <button class="accordion-button collapsed fw-bold" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="{{ '#flush-' . $key }}"
+                                                aria-expanded="false" aria-controls="{{ 'flush-collapse' . $key }}">
+                                                {!! $value['faq_questions'] !!}
+                                            </button>
+                                        </h2>
+                                        <div id="{{ 'flush-' . $key }}" class="accordion-collapse collapse"
+                                            aria-labelledby="{{ 'flush-heading' . $key }}"
+                                            data-bs-parent="#accordionFlushExample2">
+                                            <div class="accordion-body">
+                                                {!! $value['faq_answer'] !!}
                                             </div>
                                         </div>
-                                    @endif
-                                @endforeach
-                            @endif
-                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+                        @endif
                     </div>
-
                 </div>
+
             </div>
-        </section>
-    @endif
-    <!-- [ FAqs ] end -->
-    <!-- [ testimonial ] start -->
-    @if ($settings['testimonials_status'] == 'on')
+        </div>
+    </section>
+@endif
+<!-- [ FAqs ] end -->
+<!-- [ testimonial ] start -->
+@if ($settings['testimonials_status'] == 'on')
     <section class="testimonial section-gap">
         <div class="container">
             <div class="row gy-4">
                 <div class="col-lg-4">
-                    <div class="title mb-4">
-                        <span class="d-block mb-2 fw-bold text-uppercase">TESTIMONIALS</span>
+                    <div class="mb-4 title">
+                        <span class="mb-2 d-block fw-bold text-uppercase">TESTIMONIALS</span>
                         <h2 class="mb-2">{!! $settings['testimonials_heading'] !!}</h2>
                         <p>{!! $settings['testimonials_description'] !!}</p>
                     </div>
@@ -617,12 +639,12 @@
                         @if (is_array(json_decode($settings['testimonials'])) || is_object(json_decode($settings['testimonials'])))
                             @foreach (json_decode($settings['testimonials']) as $key => $value)
                                 <div class="col-xxl-4 col-sm-6 col-lg-6 col-md-4">
-                                    <div class="card bg-dark shadow-none mb-0">
-                                        <div class="card-body p-3">
-                                            <div class="d-flex mb-3 align-items-center justify-content-between">
+                                    <div class="mb-0 shadow-none card bg-dark">
+                                        <div class="p-3 card-body">
+                                            <div class="mb-3 d-flex align-items-center justify-content-between">
                                                 <span class="theme-avtar avtar avtar-sm bg-light-dark rounded-1">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="23"
-                                                        viewBox="0 0 36 23" fill="none">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="36"
+                                                        height="23" viewBox="0 0 36 23" fill="none">
                                                         <path
                                                             d="M12.4728 22.6171H0.770508L10.6797 0.15625H18.2296L12.4728 22.6171ZM29.46 22.6171H17.7577L27.6669 0.15625H35.2168L29.46 22.6171Z"
                                                             fill="white" />
@@ -631,15 +653,15 @@
                                                 <span>
                                                     @for ($i = 1; $i <= (int) $value->testimonials_star; $i++)
                                                         <i data-feather="star"></i>
-                                                        @endfor
+                                                    @endfor
                                                 </span>
                                             </div>
                                             <h3 class="text-white">{{ $value->testimonials_title }}</h3>
                                             <p class="hljs-comment">
                                                 {{ $value->testimonials_description }}
                                             </p>
-                                            <div class="d-flex gap-3 align-items-center ">
-                                                <img src="{{ $logo.'/'. $value->testimonials_user_avtar }}"
+                                            <div class="gap-3 d-flex align-items-center ">
+                                                <img src="{{ $logo . '/' . $value->testimonials_user_avtar }}"
                                                     class="wid-40 rounded-circle" alt="">
                                                 <span class="text-white">
                                                     <b class="fw-bold d-block">{{ $value->testimonials_user }}</b>
@@ -661,127 +683,128 @@
             </div>
         </div>
     </section>
-    @endif
-    <!-- [ testimonial ] end -->
-    <!-- [ Footer ] start -->
-    <footer class="site-footer bg-gray-100">
-        <div class="container">
-            <div class="footer-row">
-                <div class="ftr-col cmp-detail">
-                    <div class="footer-logo mb-3">
-                        <a href="#" class="logo">
-                            <img src="{{ $logo.'/'. $settings['site_logo'] . '?timestamp='. time() }}" alt="logo">
-                        </a>
-                    </div>
-                    <p>
-                        {!! $settings['site_description'] !!}
-                    </p>
-
+@endif
+<!-- [ testimonial ] end -->
+<!-- [ Footer ] start -->
+<footer class="bg-gray-100 site-footer">
+    <div class="container">
+        <div class="footer-row">
+            <div class="ftr-col cmp-detail">
+                <div class="mb-3 footer-logo">
+                    <a href="#" class="logo">
+                        <img src="{{ $logo . '/' . $settings['site_logo'] . '?timestamp=' . time() }}"
+                            alt="logo">
+                    </a>
                 </div>
-                <div class="ftr-col">
-                    <ul class="list-unstyled">
+                <p>
+                    {!! $settings['site_description'] !!}
+                </p>
 
-                        @if (is_array(json_decode($settings['menubar_page'])) ||
-                        is_object(json_decode($settings['menubar_page'])))
+            </div>
+            <div class="ftr-col">
+                <ul class="list-unstyled">
+
+                    @if (is_array(json_decode($settings['menubar_page'])) || is_object(json_decode($settings['menubar_page'])))
                         @foreach (json_decode($settings['menubar_page']) as $key => $value)
-                        @if ($value->footer == 'on' && $value->header == 'off')
-                        <li><a href="{{ route('custom.pages',$value->page_slug) }}">{!! $value->menubar_page_name !!}</a></li>
-                        @endif
-                        @if ($value->footer == 'on' && $value->header == 'on')
-                        <li><a href="{{ route('custom.pages',$value->page_slug) }}">{!! $value->menubar_page_name !!}</a></li>
-                        @endif
+                            @if ($value->footer == 'on' && $value->header == 'off')
+                                <li><a
+                                        href="{{ route('custom.pages', $value->page_slug) }}">{!! $value->menubar_page_name !!}</a>
+                                </li>
+                            @endif
+                            @if ($value->footer == 'on' && $value->header == 'on')
+                                <li><a
+                                        href="{{ route('custom.pages', $value->page_slug) }}">{!! $value->menubar_page_name !!}</a>
+                                </li>
+                            @endif
                         @endforeach
-                        @endif
+                    @endif
 
 
 
-                    </ul>
-                </div>
-                <div class="ftr-col">
-                    <ul class="list-unstyled">
-                        @if (is_array(json_decode($settings['menubar_page'])) ||
-                        is_object(json_decode($settings['menubar_page'])))
+                </ul>
+            </div>
+            <div class="ftr-col">
+                <ul class="list-unstyled">
+                    @if (is_array(json_decode($settings['menubar_page'])) || is_object(json_decode($settings['menubar_page'])))
                         @foreach (json_decode($settings['menubar_page']) as $key => $value)
-
-                        @if ($value->header == 'on' && $value->footer == 'off')
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.custom.pages',$value->page_slug) }}">{{ $value->menubar_page_name }}</a>
-                        </li>
-                        @endif
+                            @if ($value->header == 'on' && $value->footer == 'off')
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                        href="{{ route('admin.custom.pages', $value->page_slug) }}">{{ $value->menubar_page_name }}</a>
+                                </li>
+                            @endif
                         @endforeach
-                        @endif
+                    @endif
 
 
-                    </ul>
-                </div>
+                </ul>
+            </div>
 
-                @if ( $settings['joinus_status'] == 'on')
-
+            @if ($settings['joinus_status'] == 'on')
                 <div class="ftr-col ftr-subscribe">
                     <h2>{!! $settings['joinus_heading'] !!}</h2>
                     <p>{!! $settings['joinus_description'] !!}</p>
-                    <form method="post" action="{{ route('admin.join_us_store') }}">
+                    <form method="post" action="">
                         @csrf
-                        <div class="input-wrapper border border-dark">
+                        <div class="border input-wrapper border-dark">
                             <input type="text" name="email" placeholder="Type your email address...">
                             <button type="submit" class="btn btn-dark rounded-pill">Join Us!</button>
                         </div>
                     </form>
                 </div>
-                @endif
-            </div>
+            @endif
         </div>
-        <div class="border-top border-dark text-center p-2">
-            {{-- <p class="mb-0">
+    </div>
+    <div class="p-2 text-center border-top border-dark">
+        {{-- <p class="mb-0">
                 Copyright © 2022 | Design By ERPGo
             </p> --}}
 
 
 
-            <p class="mb-0"> {{ __('Copyright') }} &copy;
-                {{ $adminSettings['footer_text'] ? $adminSettings['footer_text'] : config('app.name', 'E-CommerceGo') }}
-                {{ date('Y') }}</p>
+        <p class="mb-0"> {{ __('Copyright') }} &copy;
+            {{ $adminSettings['footer_text'] ? $adminSettings['footer_text'] : config('app.name', 'E-CommerceGo') }}
+            {{ date('Y') }}</p>
 
 
-        </div>
-    </footer>
-    @if ($adminSettings['enable_cookie'] == 'on')
-        @include('layouts.cookie_consent')
-    @endif
-    <!-- [ Footer ] end -->
-    <!-- Required Js -->
+    </div>
+</footer>
+@if ($adminSettings['enable_cookie'] == 'on')
+    @include('layouts.cookie_consent')
+@endif
+<!-- [ Footer ] end -->
+<!-- Required Js -->
 
 
-    <script src="{{ Module::asset('LandingPage:Resources/assets/js/plugins/popper.min.js')}}"></script>
-    <script src="{{ Module::asset('LandingPage:Resources/assets/js/plugins/bootstrap.min.js')}}"></script>
-    <script src="{{ Module::asset('LandingPage:Resources/assets/js/plugins/feather.min.js')}}"></script>
+<script src="{{ Module::asset('LandingPage:Resources/assets/js/plugins/popper.min.js') }}"></script>
+<script src="{{ Module::asset('LandingPage:Resources/assets/js/plugins/bootstrap.min.js') }}"></script>
+<script src="{{ Module::asset('LandingPage:Resources/assets/js/plugins/feather.min.js') }}"></script>
 
-    <script>
-        // Start [ Menu hide/show on scroll ]
-        let ost = 0;
-        document.addEventListener("scroll", function () {
-            let cOst = document.documentElement.scrollTop;
-            if (cOst == 0) {
-                document.querySelector(".navbar").classList.add("top-nav-collapse");
-            } else if (cOst > ost) {
-                document.querySelector(".navbar").classList.add("top-nav-collapse");
-                document.querySelector(".navbar").classList.remove("default");
-            } else {
-                document.querySelector(".navbar").classList.add("default");
-                document
-                    .querySelector(".navbar")
-                    .classList.remove("top-nav-collapse");
-            }
-            ost = cOst;
-        });
-        // End [ Menu hide/show on scroll ]
+<script>
+    // Start [ Menu hide/show on scroll ]
+    let ost = 0;
+    document.addEventListener("scroll", function() {
+        let cOst = document.documentElement.scrollTop;
+        if (cOst == 0) {
+            document.querySelector(".navbar").classList.add("top-nav-collapse");
+        } else if (cOst > ost) {
+            document.querySelector(".navbar").classList.add("top-nav-collapse");
+            document.querySelector(".navbar").classList.remove("default");
+        } else {
+            document.querySelector(".navbar").classList.add("default");
+            document
+                .querySelector(".navbar")
+                .classList.remove("top-nav-collapse");
+        }
+        ost = cOst;
+    });
+    // End [ Menu hide/show on scroll ]
 
-        var scrollSpy = new bootstrap.ScrollSpy(document.body, {
-            target: "#navbar-example",
-        });
-        feather.replace();
-
-    </script>
+    var scrollSpy = new bootstrap.ScrollSpy(document.body, {
+        target: "#navbar-example",
+    });
+    feather.replace();
+</script>
 
 </body>
 

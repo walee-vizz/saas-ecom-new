@@ -16,7 +16,7 @@ use Laravel\Paddle\Billable;
 
 class User extends Authenticatable implements LaratrustUser, MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable,HasRolesAndPermissions, Impersonate,Billable;
+    use HasApiTokens, HasFactory, Notifiable, HasRolesAndPermissions, Impersonate, Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -74,23 +74,20 @@ class User extends Authenticatable implements LaratrustUser, MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    public function getProfileImageAttribute($value) {
+    public function getProfileImageAttribute($value)
+    {
         if (!empty($value)) {
-            return 'storage/'.$value;
+            return 'storage/' . $value;
         } else {
             return null;
         }
-        
     }
 
     public function creatorId()
     {
-        if($this->type == 'admin' || $this->type == 'super admin')
-        {
+        if ($this->type == 'admin' || $this->type == 'super admin') {
             return $this->id;
-        }
-        else
-        {
+        } else {
             return $this->created_by;
         }
     }
@@ -98,9 +95,9 @@ class User extends Authenticatable implements LaratrustUser, MustVerifyEmail
     public static function slugs($data)
     {
         $slug = '';
-        $slug = strtolower(str_replace(" ", "-",$data));
+        $slug = strtolower(str_replace(" ", "-", $data));
         $table = with(new Store)->getTable();
-        $allSlugs = self::getRelatedSlugs($table, $slug ,$id = 0);
+        $allSlugs = self::getRelatedSlugs($table, $slug, $id = 0);
 
         if (!$allSlugs->contains('slug', $slug)) {
             return $slug;
@@ -109,11 +106,15 @@ class User extends Authenticatable implements LaratrustUser, MustVerifyEmail
             $newSlug = $slug . '-' . $i;
             if (!$allSlugs->contains('slug', $newSlug)) {
                 return $newSlug;
-
             }
         }
     }
 
+    public function currentStore()
+    {
+        return $this->belongsTo(Store::class, 'current_store');
+        // return Store::where('id', '=', $this->current_store)->first();
+    }
     public function dateFormat($date)
     {
         $settings = Utility::seting();
@@ -139,47 +140,36 @@ class User extends Authenticatable implements LaratrustUser, MustVerifyEmail
     public function assignPlan($planID)
     {
         $plan = Plan::find($planID);
-        $oldplan= Plan::where('id',$this->plan_id)->first();
-        if($plan)
-        {
+        $oldplan = Plan::where('id', $this->plan_id)->first();
+        if ($plan) {
             $this->plan_id = $plan->id;
-            if($this->trial_expire_date != null);
-            {
+            if ($this->trial_expire_date != null); {
                 $this->trial_expire_date = null;
             }
-            if($plan->duration == 'Month')
-            {
+            if ($plan->duration == 'Month') {
                 $this->plan_expire_date = Carbon::now()->addMonths(1)->isoFormat('YYYY-MM-DD');
-            }
-            elseif($plan->duration == 'Year')
-            {
+            } elseif ($plan->duration == 'Year') {
                 $this->plan_expire_date = Carbon::now()->addYears(1)->isoFormat('YYYY-MM-DD');
-            }
-            else if($plan->duration == 'Unlimited')
-            {
+            } else if ($plan->duration == 'Unlimited') {
                 $this->plan_expire_date = null;
             }
 
             $modules = $plan->modules ?? null;
-            if(!empty($modules))
-            {
-                $modules_array = explode(',',$modules);
+            if (!empty($modules)) {
+                $modules_array = explode(',', $modules);
                 $currentActiveModules = userActiveModule::where('user_id', $this->id)->pluck('module')->toArray();
 
-                if(!empty($user->active_module) && $oldplan->custom_plan == 1)
-                {
+                if (!empty($user->active_module) && $oldplan->custom_plan == 1) {
                     $user_module = $currentActiveModules;
                     foreach ($modules_array as $module) {
-                        if(!in_array($module,$user_module)){
-                            array_push($user_module,$module);
+                        if (!in_array($module, $user_module)) {
+                            array_push($user_module, $module);
                         }
                     }
-                }
-                else
-                {
+                } else {
                     $user_module = $modules_array;
                 }
-              
+
 
                 // Sidebar Performance Changes
                 $newModules = array_diff($user_module, $currentActiveModules);
@@ -196,8 +186,7 @@ class User extends Authenticatable implements LaratrustUser, MustVerifyEmail
                     userActiveModule::where('user_id', $user->id)->where('module', $moduleName)->delete();
                 }
 
-                $this->active_module = implode(',',$user_module);
-
+                $this->active_module = implode(',', $user_module);
             }
 
             $this->save();
@@ -258,36 +247,26 @@ class User extends Authenticatable implements LaratrustUser, MustVerifyEmail
             //         }
             //     }
             // }
-            if($plan->max_users == -1)
-            {
-                foreach($users as $user)
-                {
+            if ($plan->max_users == -1) {
+                foreach ($users as $user) {
                     $user->is_active = 1;
                     $user->save();
                 }
-            }
-            else
-            {
+            } else {
                 $userCount = 0;
-                foreach($users as $user)
-                {
+                foreach ($users as $user) {
                     $userCount++;
-                    if($userCount <= $plan->max_users)
-                    {
+                    if ($userCount <= $plan->max_users) {
                         $user->is_active = 1;
                         $user->save();
-                    }
-                    else
-                    {
+                    } else {
                         $user->is_active = 0;
                         $user->save();
                     }
                 }
             }
             return ['is_success' => true];
-        }
-        else
-        {
+        } else {
             return [
                 'is_success' => false,
                 'error' => 'Plan is deleted.',
@@ -316,9 +295,7 @@ class User extends Authenticatable implements LaratrustUser, MustVerifyEmail
         return $this->hasMany(User::class, 'created_by')->where('type', 'admin');
     }
 
-    public static $superadmin_activated_module = [
-        
-    ];
+    public static $superadmin_activated_module = [];
 
     public function totalStoreUser($id)
     {

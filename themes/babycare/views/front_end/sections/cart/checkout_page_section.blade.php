@@ -1,5 +1,8 @@
-<section class="checkout-page padding-bottom padding-top  {{ $option->class_name }}" style="position: relative;@if($option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif" data-index="{{ $option->order }}" data-id="{{ $option->order }}" data-value="{{ $option->id }}" data-hide="{{ $option->is_hide  }}">
-    <div class="custome_tool_bar"></div>    
+<section class="checkout-page padding-bottom padding-top  {{ $option->class_name }}"
+    style="position: relative;@if ($option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif"
+    data-index="{{ $option->order }}" data-id="{{ $option->order }}" data-value="{{ $option->id }}"
+    data-hide="{{ $option->is_hide }}">
+    <div class="custome_tool_bar"></div>
     <div class="container">
         <div class="my-acc-head">
             <div class="d-flex justify-content-start back-toshop">
@@ -34,7 +37,7 @@
                                         an order's status,
                                         and keep track of the orders you have previously made.</p>
                                     <div class="btn-flex d-flex align-items-center">
-                                        <a href="register.html" class="btn  reg-btn">
+                                        <a href="register.html" class="btn reg-btn">
                                             Register
                                             <svg xmlns="http://www.w3.org/2000/svg" width="35" height="14"
                                                 viewBox="0 0 35 14" fill="none">
@@ -83,8 +86,8 @@
                                             </div>
                                         </div>
                                         <div class="form-container">
-                                            <div class="row align-items-center form-footer  ">
-                                                <div class="col-lg-12  col-12 d-flex align-items-center">
+                                            <div class="row align-items-center form-footer ">
+                                                <div class="col-lg-12 col-12 d-flex align-items-center">
                                                     <button class="btn" type="submit">
                                                         Login
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="35"
@@ -136,8 +139,8 @@
                                         <div class="col-md-6 col-12">
                                             <div class="form-group">
                                                 <label>Telephone<sup aria-hidden="true">*</sup>:</label>
-                                                <input type="number" class="form-control"
-                                                    placeholder="1234567890" required="">
+                                                <input type="number" class="form-control" placeholder="1234567890"
+                                                    required="">
                                             </div>
                                         </div>
                                     </div>
@@ -293,7 +296,8 @@
                                         <div class="radio-right">
                                             <p>Price:</p>
                                             <b>$5.00</b>
-                                            <img src="{{ asset('themes/' . $currentTheme . '/assets/images/dhl_logo-1.png') }}" alt="dhl">
+                                            <img src="{{ asset('themes/' . $currentTheme . '/assets/images/dhl_logo-1.png') }}"
+                                                alt="dhl">
                                         </div>
                                     </label>
                                 </div>
@@ -307,14 +311,14 @@
                                         <div class="radio-right">
                                             <p>Price:</p>
                                             <b>$5.00</b>
-                                            <img src="{{ asset('themes/' . $currentTheme . '/assets/images/truck.png') }}" alt="dhl">
+                                            <img src="{{ asset('themes/' . $currentTheme . '/assets/images/truck.png') }}"
+                                                alt="dhl">
                                         </div>
                                     </label>
                                 </div>
                                 <div class="form-group">
                                     <label>Add Comments About Your Order:</label>
-                                    <textarea class="form-control" name="message" placeholder="Description"
-                                        rows="8"></textarea>
+                                    <textarea class="form-control" name="message" placeholder="Description" rows="8"></textarea>
                                 </div>
                                 <div class="form-container">
                                     <div class="d-flex acc-back-btn-wrp align-items-center justify-content-end">
@@ -352,7 +356,8 @@
                                         <div class="radio-right">
                                             <p>Additional price:</p>
                                             <b>$0.00</b>
-                                            <img src="{{ asset('themes/' . $currentTheme . '/assets/images/paypal-2.png') }}" alt="paypal">
+                                            <img src="{{ asset('themes/' . $currentTheme . '/assets/images/paypal-2.png') }}"
+                                                alt="paypal">
                                         </div>
                                     </label>
                                 </div>
@@ -366,22 +371,22 @@
                                         <div class="radio-right">
                                             <p>Additional price:</p>
                                             <b>$1.00</b>
-                                            <img src="{{ asset('themes/' . $currentTheme . '/assets/images/dhl-2.png') }}" alt="dhl">
+                                            <img src="{{ asset('themes/' . $currentTheme . '/assets/images/dhl-2.png') }}"
+                                                alt="dhl">
                                         </div>
                                     </label>
                                 </div>
                                 <div class="form-group">
                                     <label>Add Comments About Your Order:</label>
-                                    <textarea class="form-control" name="message" placeholder="Description"
-                                        rows="8"></textarea>
+                                    <textarea class="form-control" name="message" placeholder="Description" rows="8"></textarea>
                                 </div>
                                 <div class="form-container">
                                     <div class="d-flex acc-back-btn-wrp align-items-center justify-content-end">
                                         <div class="checkbox-custom">
                                             <input type="checkbox" id="agg">
                                             <label for="agg">
-                                                <span>I have read and agree to the <a
-                                                        href="privacy-policy.html">Terms &amp; Conditions.</a>
+                                                <span>I have read and agree to the <a href="privacy-policy.html">Terms
+                                                        &amp; Conditions.</a>
                                                 </span>
                                             </label>
                                         </div>
@@ -460,19 +465,20 @@
                                 <div class="order-paymentcol">
                                     <div class="order-paycol-inner">
                                         <p>Payment method:</p>
-                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/paypal.png') }}" alt="paypal">
+                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/paypal.png') }}"
+                                            alt="paypal">
                                     </div>
                                 </div>
                                 <div class="order-paymentcol">
                                     <div class="order-paycol-inner">
                                         <p>Delivery method</p>
-                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/dhl.png') }}" alt="dhl">
+                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/dhl.png') }}"
+                                            alt="dhl">
                                     </div>
                                 </div>
                                 <div class="order-paymentcol">
                                     <div class="order-paycol-inner">
-                                        <div
-                                            class="d-flex align-items-center justify-content-between payment-ttl-row">
+                                        <div class="d-flex align-items-center justify-content-between payment-ttl-row">
                                             <div class="payment-ttl-left">
                                                 <span>
                                                     Sub-total:
@@ -520,7 +526,8 @@
                             <div class="mini-cart-item">
                                 <div class="mini-cart-image">
                                     <a href="product.html">
-                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/cart.png') }}" alt="img">
+                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/cart.png') }}"
+                                            alt="img">
                                         <span>1</span>
                                     </a>
                                 </div>
@@ -577,7 +584,8 @@
                             <div class="mini-cart-item">
                                 <div class="mini-cart-image">
                                     <a href="product.html">
-                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/cart.png') }}" alt="img">
+                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/cart.png') }}"
+                                            alt="img">
                                         <span>1</span>
                                     </a>
                                 </div>
@@ -634,7 +642,8 @@
                             <div class="mini-cart-item">
                                 <div class="mini-cart-image">
                                     <a href="product.html">
-                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/cart.png') }}" alt="img">
+                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/cart.png') }}"
+                                            alt="img">
                                         <span>1</span>
                                     </a>
                                 </div>
@@ -691,7 +700,8 @@
                             <div class="mini-cart-item">
                                 <div class="mini-cart-image">
                                     <a href="product.html">
-                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/cart.png') }}" alt="img">
+                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/cart.png') }}"
+                                            alt="img">
                                         <span>1</span>
                                     </a>
                                 </div>
@@ -747,8 +757,7 @@
                             </div>
                         </div>
                         <div class="mini-cart-footer">
-                            <div
-                                class="mini-cart-footer-total-row d-flex align-items-center justify-content-between">
+                            <div class="mini-cart-footer-total-row d-flex align-items-center justify-content-between">
                                 <div class="mini-total-lbl">
                                     Subtotal :
                                 </div>
@@ -756,15 +765,14 @@
                                     $207.00
                                 </div>
                             </div>
-                            <div class="u-save d-flex justify-end">
+                            <div class="justify-end u-save d-flex">
                                 You Save: $60.00
                             </div>
                             <button class="btn checkout-btn">
                                 checkout
                                 <svg xmlns="http://www.w3.org/2000/svg" width="35" height="14"
                                     viewBox="0 0 35 14" fill="none">
-                                    <path
-                                        d="M25.0749 14L35 7L25.0805 0L29.12 6.06667H0V7.93333H29.12L25.0749 14Z">
+                                    <path d="M25.0749 14L35 7L25.0805 0L29.12 6.06667H0V7.93333H29.12L25.0749 14Z">
                                     </path>
                                 </svg>
                             </button>

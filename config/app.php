@@ -172,7 +172,7 @@ return [
         Anand\LaravelPaytmWallet\PaytmWalletServiceProvider::class,
         Paytabscom\Laravel_paytabs\PaypageServiceProvider::class,
         App\Providers\ViewServiceProvider::class,
-
+        // App\Providers\ModuleServiceProvider::class,
     ])->toArray(),
 
     /*
@@ -190,7 +190,7 @@ return [
         // 'Example' => App\Facades\Example::class,
         'NoCaptcha' => Anhskohbo\NoCaptcha\Facades\NoCaptcha::class,
         'PaytmWallet' => Anand\LaravelPaytmWallet\Facades\PaytmWallet::class,
-
+        'Themes' => App\Facades\Themes::class,
     ])->toArray(),
 
 ];

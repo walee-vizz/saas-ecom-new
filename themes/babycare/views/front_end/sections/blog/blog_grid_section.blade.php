@@ -1,5 +1,8 @@
-<section class="blog-grid-section padding-top padding-bottom tabs-wrapper {{ $option->class_name }}" style="position: relative;@if($option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif" data-index="{{ $option->order }}" data-id="{{ $option->order }}" data-value="{{ $option->id }}" data-hide="{{ $option->is_hide  }}">
-    <div class="custome_tool_bar"></div>    
+<section class="blog-grid-section padding-top padding-bottom tabs-wrapper {{ $option->class_name }}"
+    style="position: relative;@if ($option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif"
+    data-index="{{ $option->order }}" data-id="{{ $option->order }}" data-value="{{ $option->id }}"
+    data-hide="{{ $option->is_hide }}">
+    <div class="custome_tool_bar"></div>
     <div class="container">
         <div class="section-title">
             <div class="subtitle">ALL BLOGS</div>
@@ -28,8 +31,9 @@
                         <div class="blog-itm-inner">
                             <div class="blog-img">
                                 <a href="article.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}" alt="product-banner1" class="product-banner">
-                                    <h6 class="banner-date text-white">Article</h6>
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}"
+                                        alt="product-banner1" class="product-banner">
+                                    <h6 class="text-white banner-date">Article</h6>
                                 </a>
                             </div>
                             <div class="blog-content">
@@ -43,8 +47,7 @@
                                         simply dummy text of the printing and typesetting industry. </p>
                                 </div>
                                 <div class="blog-contnt-bottom">
-                                    <a href="article.html" class="addtocart-btn btn btn-primary w-100"
-                                        tabindex="0">
+                                    <a href="article.html" class="addtocart-btn btn btn-primary w-100" tabindex="0">
                                         Read More
                                     </a>
                                 </div>
@@ -55,8 +58,9 @@
                         <div class="blog-itm-inner">
                             <div class="blog-img">
                                 <a href="article.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}" alt="product-banner1" class="product-banner">
-                                    <h6 class="banner-date text-white">Article</h6>
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}"
+                                        alt="product-banner1" class="product-banner">
+                                    <h6 class="text-white banner-date">Article</h6>
                                 </a>
                             </div>
                             <div class="blog-content">
@@ -70,8 +74,7 @@
                                         simply dummy text of the printing and typesetting industry. </p>
                                 </div>
                                 <div class="blog-contnt-bottom">
-                                    <a href="article.html" class="addtocart-btn btn btn-primary w-100"
-                                        tabindex="0">
+                                    <a href="article.html" class="addtocart-btn btn btn-primary w-100" tabindex="0">
                                         Read More
                                     </a>
                                 </div>
@@ -82,8 +85,9 @@
                         <div class="blog-itm-inner">
                             <div class="blog-img">
                                 <a href="article.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}" alt="product-banner1" class="product-banner">
-                                    <h6 class="banner-date text-white">Article</h6>
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}"
+                                        alt="product-banner1" class="product-banner">
+                                    <h6 class="text-white banner-date">Article</h6>
                                 </a>
                             </div>
                             <div class="blog-content">
@@ -97,8 +101,7 @@
                                         simply dummy text of the printing and typesetting industry. </p>
                                 </div>
                                 <div class="blog-contnt-bottom">
-                                    <a href="article.html" class="addtocart-btn btn btn-primary w-100"
-                                        tabindex="0">
+                                    <a href="article.html" class="addtocart-btn btn btn-primary w-100" tabindex="0">
                                         Read More
                                     </a>
                                 </div>
@@ -109,8 +112,9 @@
                         <div class="blog-itm-inner">
                             <div class="blog-img">
                                 <a href="article.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}" alt="product-banner1" class="product-banner">
-                                    <h6 class="banner-date text-white">Article</h6>
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}"
+                                        alt="product-banner1" class="product-banner">
+                                    <h6 class="text-white banner-date">Article</h6>
                                 </a>
                             </div>
                             <div class="blog-content">
@@ -124,8 +128,7 @@
                                         simply dummy text of the printing and typesetting industry. </p>
                                 </div>
                                 <div class="blog-contnt-bottom">
-                                    <a href="article.html" class="addtocart-btn btn btn-primary w-100"
-                                        tabindex="0">
+                                    <a href="article.html" class="addtocart-btn btn btn-primary w-100" tabindex="0">
                                         Read More
                                     </a>
                                 </div>

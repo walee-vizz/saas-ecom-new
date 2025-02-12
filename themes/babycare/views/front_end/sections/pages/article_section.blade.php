@@ -1,5 +1,9 @@
-<section class="article-section padding-top" style="position: relative;@if(isset($option) && $option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif" data-index="{{ $option->order ?? '' }}" data-id="{{ $option->order ?? '' }}" data-value="{{ $option->id ?? '' }}" data-hide="{{ $option->is_hide ?? '' }}" data-section="{{ $option->section_name ?? '' }}"  data-store="{{ $option->store_id ?? '' }}" data-theme="{{ $option->theme_id ?? '' }}">
-    <div class="custome_tool_bar"></div>            
+<section class="article-section padding-top"
+    style="position: relative;@if (isset($option) && $option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif"
+    data-index="{{ $option->order ?? '' }}" data-id="{{ $option->order ?? '' }}" data-value="{{ $option->id ?? '' }}"
+    data-hide="{{ $option->is_hide ?? '' }}" data-section="{{ $option->section_name ?? '' }}"
+    data-store="{{ $option->store_id ?? '' }}" data-theme="{{ $option->theme_id ?? '' }}">
+    <div class="custome_tool_bar"></div>
     <div class="container">
         <div class="row">
             <div class="col-12">
@@ -43,7 +47,8 @@
                         passages, and more recently with desktop publishing software like Aldus PageMaker
                         including versions of Lorem Ipsum.</p>
                     <div class="article-banner-img">
-                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/article-img.jpg') }}" alt="article">
+                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/article-img.jpg') }}"
+                            alt="article">
                     </div>
                     <div class="art-auther"><b>John Doe</b>, <a href="company.com">company.com</a></div>
                     <p> It has survived not only five centuries, but also the leap into electronic typesetting,
@@ -125,8 +130,9 @@
                         <div class="blog-itm-inner">
                             <div class="blog-img">
                                 <a href="article.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}" alt="product-banner1" class="product-banner">
-                                    <h6 class="banner-date text-white">Article</h6>
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}"
+                                        alt="product-banner1" class="product-banner">
+                                    <h6 class="text-white banner-date">Article</h6>
                                 </a>
                             </div>
                             <div class="blog-content">
@@ -140,8 +146,7 @@
                                         simply dummy text of the printing and typesetting industry. </p>
                                 </div>
                                 <div class="blog-contnt-bottom">
-                                    <a href="article.html" class="addtocart-btn btn btn-primary w-100"
-                                        tabindex="0">
+                                    <a href="article.html" class="addtocart-btn btn btn-primary w-100" tabindex="0">
                                         Read More
                                     </a>
                                 </div>
@@ -152,8 +157,9 @@
                         <div class="blog-itm-inner">
                             <div class="blog-img">
                                 <a href="article.html">
-                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}" alt="product-banner1" class="product-banner">
-                                    <h6 class="banner-date text-white">Article</h6>
+                                    <img src="{{ asset('themes/' . $currentTheme . '/assets/images/1.jpg') }}"
+                                        alt="product-banner1" class="product-banner">
+                                    <h6 class="text-white banner-date">Article</h6>
                                 </a>
                             </div>
                             <div class="blog-content">

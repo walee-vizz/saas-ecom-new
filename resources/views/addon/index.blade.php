@@ -3,11 +3,11 @@
 @section('page-title', __('Add-on Theme'))
 
 @section('action-button')
-<div class="text-end d-flex all-button-box justify-content-md-end justify-content-center">
-    <a href="{{ route('addon.create') }}" class="btn btn-sm btn-primary">
-        <i class="ti ti-plus"></i>
-    </a>
-</div>
+    <div class="text-end d-flex all-button-box justify-content-md-end justify-content-center">
+        <a href="{{ route('addon.create') }}" class="btn btn-sm btn-primary">
+            <i class="ti ti-plus"></i>
+        </a>
+    </div>
 @endsection
 
 @section('breadcrumb')
@@ -15,21 +15,24 @@
 @endsection
 
 @section('content')
-    <div class="row justify-content-center px-0">
+    <div class="px-0 row justify-content-center">
         <div class=" col-12">
             <div class="card">
-                <div class="card-body package-card-inner  d-flex align-items-center">
+                <div class="card-body package-card-inner d-flex align-items-center">
                     <div class="package-itm ">
-                        <a href="https://workdo.io/?utm_source=ecom-main-file&utm_medium=superadmin&utm_campaign=superadmin-btn-theme-all" target="new">
+                        <a href="https://workdo.io/?utm_source=ecom-main-file&utm_medium=superadmin&utm_campaign=superadmin-btn-theme-all"
+                            target="new">
                             <img src="https://workdo.io/wp-content/uploads/2023/04/Logo.svg" alt="">
                         </a>
                     </div>
-                    <div class="package-content flex-grow-1  px-3">
+                    <div class="px-3 package-content flex-grow-1">
                         <h4>{{ __('Get More Themes Addon') }}</h4>
                         <div class="text-muted">{{ __('+35 Premium Themes Addon') }}</div>
                     </div>
                     <div class="price text-end">
-                        <a class="btn btn-primary" href="https://workdo.io/product-category/theme-addon/?utm_source=ecom-main-file&utm_medium=superadmin&utm_campaign=superadmin-btn-theme-all" target="new">
+                        <a class="btn btn-primary"
+                            href="https://workdo.io/product-category/theme-addon/?utm_source=ecom-main-file&utm_medium=superadmin&utm_campaign=superadmin-btn-theme-all"
+                            target="new">
                             {{ __('Themes Addon') }}
                         </a>
                     </div>
@@ -41,10 +44,10 @@
     <div class="col-md-4">
         <h4 class="mb-3"> {{ __('Installed Theme') }}</h4>
     </div>
-    <div class="event-cards row px-0">
-            @php
-                $theme_array = [];
-            @endphp
+    <div class="px-0 event-cards row">
+        @php
+            $theme_array = [];
+        @endphp
         @foreach ($addon_themes as $key => $value)
             @php
                 $theme_array[] = $value->theme_id;
@@ -53,8 +56,9 @@
                 <div class="product-card ">
                     <div class="product-card-inner">
                         <div class="product-card-image img-wrapper">
-                            <a href="{{ asset('themes/'.$value->theme_id.'/theme_img/img_1.png') }}" class="pdp-img" target="_blank" tabindex="0">
-                                <img src="{{ asset('themes/'.$value->theme_id.'/theme_img/img_1.png') }}">
+                            <a href="{{ asset('themes/'.$value->theme_id '/thetheme_img/img_1.png') }}" class="pdp-img"
+                                target="_blank" tabindex="0">
+                                <img src="{{ asset('themes/'.$value->theme_id '/thetheme_img/img_1.png') }}">
                             </a>
 
                             <div class="checkbox-custom">
@@ -65,25 +69,27 @@
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-end" style="">
                                         @if ($value->status == '1')
-                                            <a href="#!" class="dropdown-item module_change" data-id="{{ $value->theme_id }}">
+                                            <a href="#!" class="dropdown-item module_change"
+                                                data-id="{{ $value->theme_id }}">
                                                 <span>Disable</span>
                                             </a>
                                         @else
-                                            <a href="#!" class="dropdown-item module_change" data-id="{{ $value->theme_id }}">
+                                            <a href="#!" class="dropdown-item module_change"
+                                                data-id="{{ $value->theme_id }}">
                                                 <span>Enable</span>
                                             </a>
                                         @endif
 
-                                        <form action="{{ route('theme.enable') }}" method="POST" id="form_{{ $value->theme_id }}">
+                                        <form action="{{ route('theme.enable') }}" method="POST"
+                                            id="form_{{ $value->theme_id }}">
                                             @csrf
-                                            <input type="hidden"
-                                                name="name" value="{{ $value->theme_id }}">
+                                            <input type="hidden" name="name" value="{{ $value->theme_id }}">
                                         </form>
 
                                         {!! Form::open(['method' => 'DELETE', 'route' => ['addon.destroy', $value->theme_id], 'class' => 'd-inline']) !!}
-                                            <button type="button" class="dropdown-item show_confirm">
-                                                <span class="text-danger">Remove</span>
-                                            </button>
+                                        <button type="button" class="dropdown-item show_confirm">
+                                            <span class="text-danger">Remove</span>
+                                        </button>
                                         {!! Form::close() !!}
 
                                     </div>
@@ -94,7 +100,7 @@
                         <div class="product-content">
                             <div class="product-content-top">
                                 <small class="text-muted">
-                                    @if($value->status == '1')
+                                    @if ($value->status == '1')
                                         <span class="badges bg-success">Enable</span>
                                     @else
                                         <span class="badges bg-danger">Disable</span>
@@ -112,14 +118,15 @@
     <div class="col-md-4">
         <h4 class="mb-3"> {{ __('Buy More Themes') }}</h4>
     </div>
-    <div class="event-cards row px-0">
+    <div class="px-0 event-cards row">
         @foreach ($theme['theme'] as $key => $value)
-            @if (!in_array($value[0],$theme_array))
+            @if (!in_array($value[0], $theme_array))
                 <div class="col-lg-3 col-md-4 col-sm-6 card-wrapper">
                     <div class="product-card ">
                         <div class="product-card-inner">
                             <div class="product-card-image img-wrapper">
-                                <a href="{{ $value[3] }}?utm_source=ecom-main-file&utm_medium=superadmin&utm_campaign=superadmin-btn-theme-{{ $value[0] }}" target="_new" class="pdp-img" tabindex="0">
+                                <a href="{{ $value[3] }}?utm_source=ecom-main-file&utm_medium=superadmin&utm_campaign=superadmin-btn-theme-{{ $value[0] }}"
+                                    target="_new" class="pdp-img" tabindex="0">
                                     <img src="{{ $value[2] }}">
                                 </a>
                             </div>
@@ -128,21 +135,24 @@
                                     <small class="text-muted">
                                         <span class="badges bg-success">{{ __('Free Add-On') }}</span>
                                     </small>
-                                    <div class="d-flex align-items-center justify-content-between gap-2">
+                                    <div class="gap-2 d-flex align-items-center justify-content-between">
                                         <h4 class="text-capitalize">{{ $value[0] }} ({{ __('Free Add-On') }}) </h4>
-                                        @if(!in_array($value[0],['babycare','grocery','scent']))
-                                               <a href="https://s3.ap-southeast-1.wasabisys.com/workdo-main-file.rajodiya/ecommercego/main_files/{{$value[0]}}/theme-addon/{{$value[0]}}.zip" target="_new" class="btn btn-outline-primary btn-sm" title="Free Download">{{ __('Free Download') }}
+                                        @if (!in_array($value[0], ['babycare', 'grocery', 'scent']))
+                                            <a href="https://s3.ap-southeast-1.wasabisys.com/workdo-main-file.rajodiya/ecommercego/main_files/{{ $value[0] }}/theme-addon/{{ $value[0] }}.zip"
+                                                target="_new" class="btn btn-outline-primary btn-sm"
+                                                title="Free Download">{{ __('Free Download') }}
                                                 <!-- <i class="fa fa-download"
-                                                        aria-hidden="true"></i> -->
-                                                    </a>
-                                            @endif
+                                                                aria-hidden="true"></i> -->
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
-                                <div class="product-content-bottom d-flex gap-2">
+                                <div class="gap-2 product-content-bottom d-flex">
                                     <a href="{{ $value[1] }}" target="_new"
-                                        class="btn btn-outline-primary w-100 mt-2">{{ __('View Demo') }}</a>
-                                        <a href="{{ $value[3] }}?utm_source=ecom-main-file&utm_medium=superadmin&utm_campaign=superadmin-btn-theme-{{ $value[0] }}" target="_new"
-                                        class="btn btn-outline-primary w-100 mt-2">{{ __('View Details') }}</a>
+                                        class="mt-2 btn btn-outline-primary w-100">{{ __('View Demo') }}</a>
+                                    <a href="{{ $value[3] }}?utm_source=ecom-main-file&utm_medium=superadmin&utm_campaign=superadmin-btn-theme-{{ $value[0] }}"
+                                        target="_new"
+                                        class="mt-2 btn btn-outline-primary w-100">{{ __('View Details') }}</a>
                                 </div>
                             </div>
                         </div>
@@ -155,12 +165,9 @@
 @endsection
 @push('custom-script')
     <script>
-        $(document).on('click','.module_change',function(){
+        $(document).on('click', '.module_change', function() {
             var id = $(this).data('id');
-            $('#form_'+id).submit();
+            $('#form_' + id).submit();
         });
     </script>
 @endpush
-
-
-

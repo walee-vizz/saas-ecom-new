@@ -1,21 +1,28 @@
-<section class="show-products padding-top" style="position: relative;@if(isset($option) && $option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif" data-index="{{ $option->order ?? '' }}" data-id="{{ $option->order ?? '' }}" data-value="{{ $option->id ?? '' }}" data-hide="{{ $option->is_hide ?? '' }}" data-section="{{ $option->section_name ?? '' }}"  data-store="{{ $option->store_id ?? '' }}" data-theme="{{ $option->theme_id ?? '' }}">
-    <div class="custome_tool_bar"></div>       
+<section class="show-products padding-top"
+    style="position: relative;@if (isset($option) && $option->is_hide == 1) opacity: 0.5; @else opacity: 1; @endif"
+    data-index="{{ $option->order ?? '' }}" data-id="{{ $option->order ?? '' }}" data-value="{{ $option->id ?? '' }}"
+    data-hide="{{ $option->is_hide ?? '' }}" data-section="{{ $option->section_name ?? '' }}"
+    data-store="{{ $option->store_id ?? '' }}" data-theme="{{ $option->theme_id ?? '' }}">
+    <div class="custome_tool_bar"></div>
     <div class="container">
         <div class="row">
             <div class="col-lg-6 col-md-6 col-12">
                 <div class="show-products-left-inner">
-                    @if(isset($section->modern_product->section->title))
-                    <div class="section-title section-title-white">
-                        <h2 id="{{ $section->modern_product->section->title->slug ?? '' }}_preview"> {!! $section->modern_product->section->title->text ?? '' !!} </h2>
-                    </div>
+                    @if (isset($section->modern_product->section->title))
+                        <div class="section-title section-title-white">
+                            <h2 id="{{ $section->modern_product->section->title->slug ?? '' }}_preview">
+                                {!! $section->modern_product->section->title->text ?? '' !!} </h2>
+                        </div>
                     @endif
                     <div class="row align-items-center min-padding-top">
                         <div class="col-lg-6 col-md-12 col-sm-6 col-12 bestseller-item product-card">
                             <div class="product-card-inner">
                                 <div class="product-card-image">
                                     <a href="product.html">
-                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1.png') }}" class="default-img">
-                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1-hover.png') }}" class="hover-img">
+                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1.png') }}"
+                                            class="default-img">
+                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1-hover.png') }}"
+                                            class="hover-img">
                                     </a>
                                     <div class="new-labl">
                                         -20%
@@ -105,8 +112,10 @@
                             <div class="product-card-inner">
                                 <div class="product-card-image">
                                     <a href="product.html">
-                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1.png') }}" class="default-img">
-                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1-hover.png') }}" class="hover-img">
+                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1.png') }}"
+                                            class="default-img">
+                                        <img src="{{ asset('themes/' . $currentTheme . '/assets/images/best-pro1-hover.png') }}"
+                                            class="hover-img">
                                     </a>
                                     <div class="new-labl">
                                         -20%
@@ -190,14 +199,15 @@
                         </div>
                         <div class="col-md-12 col-12">
                             <div class="section-title show-more-text-link">
-                                @if(isset($section->modern_product->section->sub_title))
-                                <h3 id="{{ $section->modern_product->section->sub_title->slug ?? '' }}_preview">{!!  $section->modern_product->section->sub_title->text ?? '' !!} </h3>
+                                @if (isset($section->modern_product->section->sub_title))
+                                    <h3 id="{{ $section->modern_product->section->sub_title->slug ?? '' }}_preview">
+                                        {!! $section->modern_product->section->sub_title->text ?? '' !!} </h3>
                                 @endif
-                                @if(isset($section->modern_product->section->button))
-                                <div class="banner-links">
-                                    <a href="product-list.html" class="btn btn-primary white-btn"
-                                        tabindex="0" id="{{ $section->modern_product->section->button->slug ?? '' }}_preview">{{  $section->modern_product->section->button->text ?? '' }}</a>
-                                </div>
+                                @if (isset($section->modern_product->section->button))
+                                    <div class="banner-links">
+                                        <a href="product-list.html" class="btn btn-primary white-btn" tabindex="0"
+                                            id="{{ $section->modern_product->section->button->slug ?? '' }}_preview">{{ $section->modern_product->section->button->text ?? '' }}</a>
+                                    </div>
                                 @endif
                             </div>
                         </div>

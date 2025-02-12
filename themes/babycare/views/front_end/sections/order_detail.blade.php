@@ -78,7 +78,7 @@
                 <div class="order-detail">
                     <div class="right-side-header">
                         <div class="header-info-end">
-                            <ul class="menu-right d-flex align-items-center  justify-content-end">
+                            <ul class="menu-right d-flex align-items-center justify-content-end">
                                 <li class="menu-lnk has-item lang-dropdown">
                                     <a href="#">
                                         <span class="link-icon">
@@ -168,9 +168,9 @@
                                     class=" d-flex all-button-box justify-content-md-end justify-content-end text-end">
 
                                     <button type="submit" onclick="saveAsPDF();" title="Print" aria-label="Print"
-                                        class="btn continue-btn  ">
+                                        class="btn continue-btn ">
                                         <i class="ti ti-printer" style="font-size:20px"> </i>
-                                        <span class="btn-inner--text text-white">{{ __('Print') }}</span>
+                                        <span class="text-white btn-inner--text">{{ __('Print') }}</span>
 
                                     </button>
                                     <button
@@ -182,7 +182,7 @@
                                         <a class="delstatus btn btn-sm btn-primary me-2 " style="margin-left: 5px"
                                             data-id ="{{ $order['id'] }}">
                                             <i class="ti ti-trash " style="font-size:20px"></i>
-                                            <span class="btn-inner--text text-white">{{ __('Order Cencel') }}</span>
+                                            <span class="text-white btn-inner--text">{{ __('Order Cencel') }}</span>
                                         </a>
                                     @endif
                                 </div>
@@ -235,7 +235,7 @@
                                                         @endphp
                                                         <tr>
                                                             <td class="total">
-                                                                <span class="p text-sm"> <a
+                                                                <span class="text-sm p"> <a
                                                                         href="#">{{ $item['name'] }}</a> </span>
                                                                 <br>
                                                                 <span class="text-sm"> {{ $item['variant_name'] }}
@@ -294,36 +294,36 @@
                                             <div class="card-header d-flex justify-content-between">
                                                 <b class="">{{ __('Shipping Information') }}</b>
                                             </div>
-                                            <div class="card-body pt-0">
+                                            <div class="pt-0 card-body">
                                                 <address class="mb-0 text-sm">
-                                                    <ul class="row mt-4 align-items-center">
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('Name') }}</b></li>
-                                                        <li class="col-sm-7 text-sm">
+                                                    <ul class="mt-4 row align-items-center">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('Name') }}</b></li>
+                                                        <li class="text-sm col-sm-7">
                                                             {{ !empty($order['delivery_informations']['name']) ? $order['delivery_informations']['name'] : '' }}
                                                         </li>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('Email') }}</b></li>
-                                                        <li class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('Email') }}</b></li>
+                                                        <li class="text-sm col-sm-7">
                                                             {{ !empty($order['delivery_informations']['email']) ? $order['delivery_informations']['email'] : '' }}
                                                         </li>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('City') }}</b></li>
-                                                        <li class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('City') }}</b></li>
+                                                        <li class="text-sm col-sm-7">
                                                             {{ !empty($order['delivery_informations']['city']) ? $order['delivery_informations']['city'] : '' }}
                                                         </li>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('State') }}</b></li>
-                                                        <li class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('State') }}</b></li>
+                                                        <li class="text-sm col-sm-7">
                                                             {{ !empty($order['delivery_informations']['state']) ? $order['delivery_informations']['state'] : '' }}
                                                         </li>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('Country') }}</b></li>
-                                                        <li class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('Country') }}</b></li>
+                                                        <li class="text-sm col-sm-7">
                                                             {{ !empty($order['delivery_informations']['country']) ? $order['delivery_informations']['country'] : '' }}
                                                         </li>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('Postal Code') }}</b>
+                                                        <li class="text-sm col-sm-5"><b>{{ __('Postal Code') }}</b>
                                                         </li>
-                                                        <li class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-7">
                                                             {{ !empty($order['delivery_informations']['post_code']) ? $order['delivery_informations']['post_code'] : '' }}
                                                         </li>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('Phone') }} </b></li>
-                                                        <li class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('Phone') }} </b></li>
+                                                        <li class="text-sm col-sm-7">
                                                             <a href="https://api.whatsapp.com/send?phone={{ !empty($order['delivery_informations']['phone']) ? $order['delivery_informations']['phone'] : '' }}&amp;text=Hi"
                                                                 target="_blank">
                                                                 {{ !empty($order['delivery_informations']['phone']) ? $order['delivery_informations']['phone'] : '' }}
@@ -340,36 +340,36 @@
                                             <div class="card-header d-flex justify-content-between">
                                                 <b class="">{{ __('Billing Information') }}</b>
                                             </div>
-                                            <div class="card-body pt-0">
+                                            <div class="pt-0 card-body">
                                                 <address class="mb-0 text-sm">
-                                                    <ul class="row mt-4 align-items-center">
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('Name') }}</b></li>
-                                                        <dd class="col-sm-7 text-sm pb-2">
+                                                    <ul class="mt-4 row align-items-center">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('Name') }}</b></li>
+                                                        <dd class="pb-2 text-sm col-sm-7">
                                                             {{ !empty($order['billing_informations']['name']) ? $order['billing_informations']['name'] : '' }}
                                                         </dd>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('Email') }}</b></li>
-                                                        <dd class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('Email') }}</b></li>
+                                                        <dd class="text-sm col-sm-7">
                                                             {{ !empty($order['billing_informations']['email']) ? $order['billing_informations']['email'] : '' }}
                                                         </dd>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('City') }}</b></li>
-                                                        <dd class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('City') }}</b></li>
+                                                        <dd class="text-sm col-sm-7">
                                                             {{ !empty($order['billing_informations']['city']) ? $order['billing_informations']['city'] : '' }}
                                                         </dd>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('State') }}</b></li>
-                                                        <dd class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('State') }}</b></li>
+                                                        <dd class="text-sm col-sm-7">
                                                             {{ !empty($order['billing_informations']['state']) ? $order['billing_informations']['state'] : '' }}
                                                         </dd>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('Country') }}</b></li>
-                                                        <dd class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('Country') }}</b></li>
+                                                        <dd class="text-sm col-sm-7">
                                                             {{ !empty($order['billing_informations']['country']) ? $order['billing_informations']['country'] : '' }}
                                                         </dd>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('Postal Code') }}</b>
+                                                        <li class="text-sm col-sm-5"><b>{{ __('Postal Code') }}</b>
                                                         </li>
-                                                        <dd class="col-sm-7 text-sm">
+                                                        <dd class="text-sm col-sm-7">
                                                             {{ !empty($order['billing_informations']['post_code']) ? $order['billing_informations']['post_code'] : '' }}
                                                         </dd>
-                                                        <li class="col-sm-5 text-sm"><b>{{ __('Phone') }}</b></li>
-                                                        <li class="col-sm-7 text-sm">
+                                                        <li class="text-sm col-sm-5"><b>{{ __('Phone') }}</b></li>
+                                                        <li class="text-sm col-sm-7">
                                                             <a href="https://api.whatsapp.com/send?phone={{ !empty($order['billing_informations']['phone']) ? $order['billing_informations']['phone'] : '' }}&amp;text=Hi"
                                                                 target="_blank">
                                                                 {{ !empty($order['billing_informations']['phone']) ? $order['billing_informations']['phone'] : '' }}
@@ -383,8 +383,8 @@
                                 </div>
                             </div>
                             <div class="col-xxl-5 col-md-6 col-12">
-                                <div class="card  p-0">
-                                    <div class="card-header d-flex justify-content-between pb-0">
+                                <div class="p-0 card">
+                                    <div class="pb-0 card-header d-flex justify-content-between">
                                         <b class="mb-4">{{ __('Extra Information') }}</b>
                                     </div>
                                     <div class="card-body">
@@ -482,7 +482,7 @@
             <div class="container">
 
 
-                <ul class="  social-links footer-list-social justify-content-end " role="list">
+                <ul class=" social-links footer-list-social justify-content-end" role="list">
                     @for ($i = 0; $i < $section->footer->section->footer_link->loop_number ?? 1; $i++)
                         <li>
                             <a href="{{ $section->footer->section->footer_link->social_link->{$i} ?? '#' }}"

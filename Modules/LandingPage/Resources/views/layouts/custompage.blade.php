@@ -42,16 +42,16 @@
         type="image/x-icon" /> --}}
 
     <!-- font css -->
-    <link rel="stylesheet" href=" {{ module_asset('LandingPage/Resources/assets/fonts/tabler-icons.min.css') }}" />
-    <link rel="stylesheet" href=" {{ module_asset('LandingPage/Resources/assets/fonts/feather.css') }}" />
-    <link rel="stylesheet" href="  {{ module_asset('LandingPage/Resources/assets/fonts/fontawesome.css') }}" />
-    <link rel="stylesheet" href="{{ module_asset('LandingPage/Resources/assets/fonts/material.css') }}" />
+    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/fonts/tabler-icons.min.css') }}" />
+    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/fonts/feather.css') }}" />
+    <link rel="stylesheet" href="  {{ Module::asset('LandingPage:Resources/assets/fonts/fontawesome.css') }}" />
+    <link rel="stylesheet" href="{{ Module::asset('LandingPage:Resources/assets/fonts/material.css') }}" />
 
     <!-- vendor css -->
-    <link rel="stylesheet" href="  {{ module_asset('LandingPage/Resources/assets/css/style.css') }}" />
-    <link rel="stylesheet" href=" {{ module_asset('LandingPage/Resources/assets/css/customizer.css') }}" />
-    <link rel="stylesheet" href=" {{ module_asset('LandingPage/Resources/assets/css/landing-page.css') }}" />
-    <link rel="stylesheet" href=" {{ module_asset('LandingPage/Resources/assets/css/custom.css') }}" />
+    <link rel="stylesheet" href="  {{ Module::asset('LandingPage:Resources/assets/css/style.css') }}" />
+    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/css/customizer.css') }}" />
+    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/css/landing-page.css') }}" />
+    <link rel="stylesheet" href=" {{ Module::asset('LandingPage:Resources/assets/css/custom.css') }}" />
 
     @if (isset($SITE_RTL) && $SITE_RTL == 'on')
         <link rel="stylesheet" href="{{ asset('assets/css/style-rtl.css') }}">
@@ -60,7 +60,7 @@
     @if (isset($setting['cust_darklayout']) && $setting['cust_darklayout'] == 'on')
         <link rel="stylesheet" href="{{ asset('assets/css/style-dark.css') }}">
     @else
-        <link rel="stylesheet" href="{{ module_asset('LandingPage/Resources/assets/css/style.css') }}"
+        <link rel="stylesheet" href="{{ Module::asset('LandingPage:Resources/assets/css/style.css') }}"
             id="main-style-link">
     @endif
 
@@ -342,9 +342,9 @@
 <!-- [ Footer ] end -->
 <!-- Required Js -->
 
-<script src="{{ module_asset('LandingPage/Resources/assets/js/plugins/popper.min.js') }}"></script>
-<script src="{{ module_asset('LandingPage/Resources/assets/js/plugins/bootstrap.min.js') }}"></script>
-<script src="{{ module_asset('LandingPage/Resources/assets/js/plugins/feather.min.js') }}"></script>
+<script src="{{ Module::asset('LandingPage:Resources/assets/js/plugins/popper.min.js') }}"></script>
+<script src="{{ Module::asset('LandingPage:Resources/assets/js/plugins/bootstrap.min.js') }}"></script>
+<script src="{{ Module::asset('LandingPage:Resources/assets/js/plugins/feather.min.js') }}"></script>
 
 
 <script>
