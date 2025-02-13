@@ -122,7 +122,15 @@ use App\Http\Controllers\ProductLabelController;
 //     return view('welcome');
 // });
 
-
+Route::get('/test', function () {
+    function test($e)
+    {
+        $e = 20;
+    }
+    $a = 10;
+    $a = test($a) ?? 20;
+    echo $a;
+});
 Route::get('/', [HomeController::class, 'Landing'])->name('landing')->middleware('setlocate');
 
 Route::get('change-languages/{lang}', [LanguageController::class, 'changelanguage'])->name('changelanguage')->middleware('setlocate');

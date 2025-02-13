@@ -36,22 +36,19 @@ class ProductController extends Controller
             $store_id = Store::where('id', getCurrentStore())->first();
 
             $products = Product::where('theme_id', $store_id->theme_id)->where('store_id', getCurrentStore())->orderBy('id', 'desc')->get();
-            $settings = Setting::where('theme_id',$store_id->theme_id)->where('store_id', getCurrentStore())->pluck('value', 'name')->toArray();
-
-            if($request->id ==1){
+            $settings = Setting::where('theme_id', $store_id->theme_id)->where('store_id', getCurrentStore())->pluck('value', 'name')->toArray();
+            // dd($products);
+            if ($request->id == 1) {
                 $msg = __('Product Successfully Created');
-                return view('product.index', compact('products','settings' ,'msg'));
-
-            }elseif($request->id ==2){
+                return view('product.index', compact('products', 'settings', 'msg'));
+            } elseif ($request->id == 2) {
                 $msg = __('Product Successfully Updated');
 
-                return view('product.index', compact('products','settings','msg'));
-
-
-            }else{
+                return view('product.index', compact('products', 'settings', 'msg'));
+            } else {
                 $msg = 0;
 
-                return view('product.index', compact('products','settings','msg'));
+                return view('product.index', compact('products', 'settings', 'msg'));
             }
             // if($request->id)
         } else {
@@ -64,7 +61,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $link = env('APP_URL'). '/product/';
+        $link = env('APP_URL') . '/product/';
         $MainCategory = MainCategory::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Category', '');
         $Tax = Tax::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id');
         $Tax_status = Tax::Taxstatus();
@@ -78,10 +75,9 @@ class ProductController extends Controller
             'Video Url' => 'Video Url',
             'iFrame' => 'iFrame'
         ];
-        $tag = Tag::where('store_id', getCurrentStore())->where('theme_id',APP_THEME())->pluck('name', 'id');
+        $tag = Tag::where('store_id', getCurrentStore())->where('theme_id', APP_THEME())->pluck('name', 'id');
         $ProductAttribute = ProductAttribute::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id');
-        return view('product.create' ,compact('link','MainCategory','ProductAttribute','Tax','Tax_status','Shipping','preview_type','tag', 'brands', 'labels'));
-
+        return view('product.create', compact('link', 'MainCategory', 'ProductAttribute', 'Tax', 'Tax_status', 'Shipping', 'preview_type', 'tag', 'brands', 'labels'));
     }
 
     /**
@@ -91,56 +87,54 @@ class ProductController extends Controller
     {
         // if(auth()->user()->isAbleTo('Create Product'))
         // {
-            try{
+        try {
 
-                $user = \Auth::user();
-                $creator = User::find($user->creatorId());
-                $total_products = $user->countProducts();
-                $plan = Plan::find($creator->plan_id);
-                $store_id = Store::where('id', getCurrentStore())->first();
+            $user = \Auth::user();
+            $creator = User::find($user->creatorId());
+            $total_products = $user->countProducts();
+            $plan = Plan::find($creator->plan_id);
+            $store_id = Store::where('id', getCurrentStore())->first();
 
-                if($request->variant_product == 0){
-                    $rules = [
-                        'name' => 'required',
-                        'maincategory_id' => 'required',
-                        'cover_image' => 'required',
-                        'product_image' => 'required',
-                        'status' => 'required',
-                        'variant_product' => 'required',
-                        'price' =>'required',
-                        'sale_price' =>'required',
-                        'subcategory_id' =>'required',
-                        'brand_id' =>'nullable',
-                        'label_id' =>'nullable',
+            if ($request->variant_product == 0) {
+                $rules = [
+                    'name' => 'required',
+                    'maincategory_id' => 'required',
+                    'cover_image' => 'required',
+                    'product_image' => 'required',
+                    'status' => 'required',
+                    'variant_product' => 'required',
+                    'price' => 'required',
+                    'sale_price' => 'required',
+                    'subcategory_id' => 'required',
+                    'brand_id' => 'nullable',
+                    'label_id' => 'nullable',
 
-                    ];
+                ];
+            } else {
+                $rules = [
+                    'name' => 'required',
+                    'maincategory_id' => 'required',
+                    'cover_image' => 'required',
+                    'product_image' => 'required',
+                    'status' => 'required',
+                    'variant_product' => 'required',
+                    'subcategory_id' => 'required',
+                    'brand_id' => 'nullable',
+                    'label_id' => 'nullable',
+                ];
+            }
 
-                }else{
-                    $rules = [
-                        'name' => 'required',
-                        'maincategory_id' => 'required',
-                        'cover_image' => 'required',
-                        'product_image' => 'required',
-                        'status' => 'required',
-                        'variant_product' => 'required',
-                        'subcategory_id' =>'required',
-                        'brand_id' =>'nullable',
-                        'label_id' =>'nullable',
-                    ];
-                }
+            $validator = \Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                $messages = $validator->getMessageBag();
+                $msg['flag'] = 'error';
+                $msg['msg'] = $messages->first();
 
-                $validator = \Validator::make($request->all(), $rules);
-                if ($validator->fails()) {
-                    $messages = $validator->getMessageBag();
-                    $msg['flag'] = 'error';
-                    $msg['msg'] = $messages->first();
+                return $msg;
+            }
 
-                    return $msg;
-
-                }
-
-                $dir        = 'themes/' . APP_THEME() . '/uploads';
-                if ($request->variant_product == 0) {
+            $dir        = 'themes/' . APP_THEME() . '/uploads';
+            if ($request->variant_product == 0) {
                 if ($total_products < $plan->max_products || $plan->max_products == -1) {
                     $input = $request->all();
                     $input['attribute_options'] = [];
@@ -151,12 +145,10 @@ class ProductController extends Controller
                             $variation_option = $input['for_variation_' . $no];
                             $item['attribute_id'] = $no;
 
-                            if(!empty($request[$str])){
+                            if (!empty($request[$str])) {
                                 $item['values'] = explode(',', implode('|', $request[$str]));
-
-                            }else{
+                            } else {
                                 $item['values'] = [];
-
                             }
 
                             $item['visible_attribute_' . $no] = $enable_option;
@@ -167,281 +159,28 @@ class ProductController extends Controller
 
 
 
-                if (!empty($request->attribute_no)) {
-                    $input['product_attributes'] = implode(',',$request->attribute_no);
-                }else{
-                    $input['product_attributes'] = 0;
-
-                }
-                $input['attribute_options'] = json_encode($input['attribute_options']);
-                $Product = new Product();
-                $Product->name = $request->name;
-                $Product->slug = $request->slug;
-                $Product->maincategory_id = $request->maincategory_id;
-                $Product->subcategory_id = $request->subcategory_id;
-                $Product->brand_id = $request->brand_id ?? null;
-                $Product->label_id = $request->label_id ?? null;
-                if(!empty($request->tax_id)){
-                    $Product->tax_id =implode(',', $request->tax_id);
-                }else{
-                    $tax = Tax::where('store_id' ,getCurrentStore())->where('theme_id',APP_THEME())->first();
-                    if(isset($tax))
-                    {
-                        $Product->tax_id =$tax->id;
-                    }
-                }
-
-                if ($request->cover_image) {
-
-                    $image_size = $request->file('cover_image')->getSize();
-                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-                    if ($result == 1) {
-                        $fileName = rand(10, 100) . '_' . time() . "_" . $request->cover_image->getClientOriginalName();
-                        $path = Utility::upload_file($request, 'cover_image', $fileName, $dir, []);
-                    } else {
-
-                        $msg['flag'] = 'error';
-                        $msg['msg'] = $result;
-
-                        return $msg;
-                    }
-
-                    $Product->cover_image_path = $path['url'] ?? null;
-                    $Product->cover_image_url = $path['full_url'] ?? null;
-                }
-
-                $Product->preview_type = $request->preview_type;
-
-                if(!empty($request->preview_video)){
-
-                    $ext = $request->file('preview_video')->getClientOriginalExtension();
-                    $fileName = 'video_' . time() . rand() . '.' . $ext;
-                    $dir_video = 'themes/' . APP_THEME() . '/uploads/preview_image';
-                    $image_size = $request->file('preview_video')->getSize();
-                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-                    if ($result == 1) {
-                        $path_video = Utility::upload_file($request, 'preview_video', $fileName, $dir_video, []);
-                        if ($path_video['flag'] == 1) {
-                            $url = $path_video['url'] ?? '';
-                        } else {
-                            $msg['flag'] = 'error';
-                            $msg['msg'] = $path_video['msg'];
-
-                            return $msg;
-                        }
-                    } else {
-
-                        $msg['flag'] = 'error';
-                        $msg['msg'] =  $result;
-
-                        return $msg;
-                    }
-                    $Product->preview_content = $path_video['url'] ?? null;
-                }
-                if (!empty($request->video_url)) {
-                    $Product->preview_content = $request->video_url;
-                }
-                if (!empty($request->preview_iframe)) {
-                    $Product->preview_content = $request->preview_iframe;
-                }
-                $Product->tax_status = $request->tax_status;
-                $Product->shipping_id = $request->shipping_id;
-                $Product->product_weight = $request->product_weight;
-                $Product->variant_product = $request->variant_product;
-                $Product->trending = $request->trending;
-                $Product->status = $request->status;
-                $Product->description = $request->description;
-                $Product->specification = $request->specification;
-                $Product->detail = $request->detail;
-                $Product->price = $request->price;
-                $Product->sale_price = $request->sale_price;
-
-                $Product->stock_status = $request->stock_status;
-                $Product->attribute_id = $input['product_attributes'];
-                $Product->product_attribute = $input['attribute_options'];
-
-                $Product->product_stock = !empty($request->product_stock) ? $request->product_stock : 0;
-                if ($request->track_stock == 1) {
-                    $Product->track_stock = $request->track_stock;
-                    $Product->stock_order_status = $request->stock_order_status;
-                    $Product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold :  '';
-                } else {
-                    $Product->track_stock = !empty($request->track_stock)? $request->track_stock : 0;
-                    $Product->stock_order_status = '';
-                    $Product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold :  '';
-                }
-                if ($request->custom_field_status == '1') {
-                    $Product->custom_field_status = '1';
-                    $Product->custom_field = json_encode($request->custom_field_repeater_basic);
-                }
-
-                if (!empty($request->downloadable_product)) {
-                    $image_size = $request->file('downloadable_product')->getSize();
-                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-
-                    if ($result == 1) {
-                        $fileName = rand(10, 100) . '_' . time() . "_" . $request->downloadable_product->getClientOriginalName();
-                        $path = Utility::upload_file($request, 'downloadable_product', $fileName, $dir, []);
-
-                    } else {
-                        $msg['flag'] = 'error';
-                        $msg['msg'] =  $result;
-
-                        return $msg;
-                    }
-                    $Product->downloadable_product = $path['url'];
-                }
-
-
-
-
-                $tag_data_id = [];
-                $tag_ids =[];
-
-                if(isset($request->tag_id)){
-
-                    foreach($request->tag_id as $tag){
-                        $tags = Tag::where('id' ,$tag)->where('store_id' ,getCurrentStore())->where('theme_id',APP_THEME())->first();
-                        if(!empty($tags)){
-                            $tag_id = $tags->id;
-                            $tag_ids[] = $tag_id;
-                        }else{
-                            $tag_id = 0;
-                        }
-                        if($tag_id != $tag){
-                            $tag_data = new Tag();
-                            $tag_data->name = $tag;
-                            $tag_data->store_id = getCurrentStore();
-                            $tag_data->theme_id = APP_THEME();
-                            $tag_data->created_by = \Auth::user()->id;
-                            $tag_data->save();
-
-                            $tag_data_id[] = $tag_data->id;
-
-                        }
-                    }
-                }
-                $tag_product_id = array_merge($tag_data_id,$tag_ids);
-                if(!empty($tag_product_id)){
-
-                    $Product->tag_id =  implode(',',$tag_product_id);
-                }
-                $Product->store_id = getCurrentStore();
-                $Product->theme_id = APP_THEME();
-                $Product->created_by = \Auth::user()->id;
-
-                $Product->save();
-                if (module_is_active('SizeGuideline')) {
-                    \Modules\SizeGuideline\app\Models\SizeGuideline::saveData($Product, $request->size_chart_title,$request->size_chart_information);
-                }
-                if (module_is_active('ProductBarCode')) {
-                    \Modules\ProductBarCode\app\Models\ProductBarCode::saveData($Product);
-                }
-                // if (!empty($Product))
-                // {
-                //     //webhook
-                //     $module = 'New Product';
-                //     $webhook =  Utility::webhook($module, $store_id->id);
-                //     if ($webhook) {
-                //         $parameter = json_encode($Product);
-                //         // 1 parameter is  URL , 2 parameter is data , 3 parameter is method
-                //         $status = Utility::WebhookCall($webhook['url'], $parameter, $webhook['method']);
-
-                //         if ($status != true) {
-                //             $msgs  = 'Webhook call failed.';
-                //         }
-
-                //         $msg['flag'] = 'success';
-                //         $msg['msg']  = __('Product Successfully Created') . ((isset($msgs)) ? '<br> <span class="text-danger">' . $msgs . '</span>' : '');
-                //         // $msg['msg']  = __('Product Successfully Created');
-                //     }
-                // }
-                foreach ($request->product_image as $key => $image) {
-                    $theme_image = $image;
-
-                    $image_size = File::size($theme_image);
-                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-                    if ($result == 1) {
-                        $fileName = rand(10, 100) . '_' . time() . "_" . $image->getClientOriginalName();
-                        $pathss = Utility::keyWiseUpload_file($request, 'product_image', $fileName, $dir, $key, []);
-
-                    } else {
-                        $msg['flag'] = 'error';
-                        $msg['msg'] =  $result;
-
-                        return $msg;
-                    }
-
-                    if (isset($pathss['url'])) {
-                        $ProductImage = new ProductImage();
-                        $ProductImage->product_id = $Product->id;
-                        $ProductImage->image_path = $pathss['url'];
-                        $ProductImage->image_url  = $pathss['full_url'];
-                        $ProductImage->theme_id   = $store_id->theme_id;
-                        $ProductImage->store_id   = getCurrentStore();
-                        $ProductImage->save();
-                    }
-
-                }
-
-
-                } else {
-                    $msg['flag'] = 'error';
-                    $msg['msg'] =   __('Your Product limit is over, Please upgrade plan');
-
-                    return $msg;
-                }
-                } else {
-
-                    $input = $request->all();
-
-                    $input['choice_options'] = [];
-                    $input['attribute_options'] = [];
-                    if ($request->has('choice_no')) {
-                        foreach ($request->choice_no as $key => $no) {
-                            $str = 'choice_options_' . $no;
-
-                            $item['attribute_id'] = $no;
-                            $item['values'] = explode(',', implode('|', $request[$str]));
-                            array_push($input['choice_options'], $item);
-                        }
-                    }
-
-                    if (!empty($request->choice_no)) {
-                        $input['attributes'] = json_encode($request->choice_no);
-                    } else {
-                        $input['attributes'] = json_encode([]);
-                    }
-
-                    $input['choice_options'] = json_encode($input['choice_options']);
-                    $input['slug'] = $input['name'];
-
-                    if ($request->has('attribute_no')) {
-                        foreach ($request->attribute_no as $key => $no) {
-                            $str = 'attribute_options_' . $no;
-                            $enable_option = $input['visible_attribute_' . $no];
-                            $variation_option = $input['for_variation_' . $no];
-
-                                $item['attribute_id'] = $no;
-                                if(!empty($request[$str])){
-                                    $item['values'] = explode(',', implode('|', $request[$str]));
-
-                                }else{
-                                    $item['values'] = [];
-
-                                }
-                                $item['visible_attribute_' . $no] = $enable_option;
-                                $item['for_variation_' . $no] = $variation_option;
-
-                                array_push($input['attribute_options'], $item);
-                        }
-                    }
                     if (!empty($request->attribute_no)) {
-                        $input['product_attributes'] = implode(',',$request->attribute_no);
+                        $input['product_attributes'] = implode(',', $request->attribute_no);
+                    } else {
+                        $input['product_attributes'] = 0;
                     }
                     $input['attribute_options'] = json_encode($input['attribute_options']);
+                    $Product = new Product();
+                    $Product->name = $request->name;
+                    $Product->slug = $request->slug;
+                    $Product->maincategory_id = $request->maincategory_id;
+                    $Product->subcategory_id = $request->subcategory_id;
+                    $Product->brand_id = $request->brand_id ?? null;
+                    $Product->label_id = $request->label_id ?? null;
+                    if (!empty($request->tax_id)) {
+                        $Product->tax_id = implode(',', $request->tax_id);
+                    } else {
+                        $tax = Tax::where('store_id', getCurrentStore())->where('theme_id', APP_THEME())->first();
+                        if (isset($tax)) {
+                            $Product->tax_id = $tax->id;
+                        }
+                    }
 
-                    $theme_name = APP_THEME();
                     if ($request->cover_image) {
 
                         $image_size = $request->file('cover_image')->getSize();
@@ -450,565 +189,422 @@ class ProductController extends Controller
                             $fileName = rand(10, 100) . '_' . time() . "_" . $request->cover_image->getClientOriginalName();
                             $path = Utility::upload_file($request, 'cover_image', $fileName, $dir, []);
                         } else {
+
+                            $msg['flag'] = 'error';
+                            $msg['msg'] = $result;
+
+                            return $msg;
+                        }
+
+                        $Product->cover_image_path = $path['url'] ?? null;
+                        $Product->cover_image_url = $path['full_url'] ?? null;
+                    }
+
+                    $Product->preview_type = $request->preview_type;
+
+                    if (!empty($request->preview_video)) {
+
+                        $ext = $request->file('preview_video')->getClientOriginalExtension();
+                        $fileName = 'video_' . time() . rand() . '.' . $ext;
+                        $dir_video = 'themes/' . APP_THEME() . '/uploads/preview_image';
+                        $image_size = $request->file('preview_video')->getSize();
+                        $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+                        if ($result == 1) {
+                            $path_video = Utility::upload_file($request, 'preview_video', $fileName, $dir_video, []);
+                            if ($path_video['flag'] == 1) {
+                                $url = $path_video['url'] ?? '';
+                            } else {
+                                $msg['flag'] = 'error';
+                                $msg['msg'] = $path_video['msg'];
+
+                                return $msg;
+                            }
+                        } else {
+
                             $msg['flag'] = 'error';
                             $msg['msg'] =  $result;
 
                             return $msg;
                         }
+                        $Product->preview_content = $path_video['url'] ?? null;
                     }
-                    if ($total_products < $plan->max_products || $plan->max_products == -1) {
+                    if (!empty($request->video_url)) {
+                        $Product->preview_content = $request->video_url;
+                    }
+                    if (!empty($request->preview_iframe)) {
+                        $Product->preview_content = $request->preview_iframe;
+                    }
+                    $Product->tax_status = $request->tax_status;
+                    $Product->shipping_id = $request->shipping_id;
+                    $Product->product_weight = $request->product_weight;
+                    $Product->variant_product = $request->variant_product;
+                    $Product->trending = $request->trending;
+                    $Product->status = $request->status;
+                    $Product->description = $request->description;
+                    $Product->specification = $request->specification;
+                    $Product->detail = $request->detail;
+                    $Product->price = $request->price;
+                    $Product->sale_price = $request->sale_price;
 
+                    $Product->stock_status = $request->stock_status;
+                    $Product->attribute_id = $input['product_attributes'];
+                    $Product->product_attribute = $input['attribute_options'];
 
-                        $product = new Product();
-                        $product->name = $request->name;
-                        $product->slug = $request->slug;
-                        $product->maincategory_id = $request->maincategory_id;
-                        $product->subcategory_id = $request->subcategory_id;
-                        if(!empty($request->tax_id)){
-                            $product->tax_id =implode(',', $request->tax_id);
-                        }else{
-                            $tax = Tax::where('store_id' ,getCurrentStore())->where('theme_id',APP_THEME())->first();
-                            if(isset($tax))
-                            {
-                                $product->tax_id =$tax->id;
-                            }
-                        }
-                        $product->tax_status = $request->tax_status;
-                        $product->shipping_id = $request->shipping_id;
-                        $product->status = $request->status;
-                        $product->description = $request->description;
-                        $product->specification = $request->specification;
-                        $product->detail = $request->detail;
-                        $tag_id = $request->tag;
-                        $product->cover_image_path = $path['url'] ?? null;
-                        $product->cover_image_url = $path['full_url'] ?? null;
-                        $product->attribute_id = $input['product_attributes'];
-                        $product->product_attribute = $input['attribute_options'];
-
-
-                        $product->preview_type = $request->preview_type;
-                        if (!empty($request->video_url)) {
-                            $product->preview_content = $request->video_url;
-                        }
-                        if (!empty($request->preview_video)) {
-                            $ext = $request->file('preview_video')->getClientOriginalExtension();
-                            $fileName = 'video_' . time() . rand() . '.' . $ext;
-
-                            $dir_video = 'themes/' . APP_THEME() . '/uploads/preview_image';
-
-                            $image_size = $request->file('preview_video')->getSize();
-                            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-
-                            if ($result == 1) {
-                                $path_video = Utility::upload_file($request, 'preview_video', $fileName, $dir_video, []);
-                                if ($path_video['flag'] == 1) {
-                                    $url = $path_video['url'];
-                                } else {
-                                    $msg['flag'] = 'error';
-                                    $msg['msg'] =  $path_video['msg'];
-
-                                    return $msg;
-                                }
-                            } else {
-                                $msg['flag'] = 'error';
-                                $msg['msg'] =  $result;
-
-                                return $msg;
-                            }
-                            $product->preview_content = $path_video['url'];
-                        }
-                        if (!empty($request->preview_iframe)) {
-                            $product->preview_content = $request->preview_iframe;
-                        }
-                        if (!empty($request->downloadable_product)) {
-
-                            $image_size = $request->file('downloadable_product')->getSize();
-                            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-
-                            if ($result == 1) {
-                                $fileName = rand(10, 100) . '_' . time() . "_" . $request->downloadable_product->getClientOriginalName();
-                                $path = Utility::upload_file($request, 'downloadable_product', $fileName, $dir, []);
-
-                            } else {
-                                $msg['flag'] = 'error';
-                                $msg['msg'] =  $result;
-
-                                return $msg;
-                            }
-                            $product->downloadable_product = $path['url'];
-                        }
-                        $product->product_stock = !empty($request->product_stock) ? $request->product_stock : 0;
-                        $product->variant_product = $request->variant_product;
-                        $product->trending = $request->trending ;
-                        if ($request->track_stock == 1) {
-                            $product->track_stock = $request->track_stock;
-                            $product->stock_order_status = $request->stock_order_status;
-                            $product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold : 0;
-                        } else {
-                            $product->track_stock = $request->track_stock;
-                            $product->stock_order_status = '';
-                            $product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold : 0;
-                        }
-
-
-                        $product->attribute_id = $input['product_attributes'];
-                        $product->product_attribute = $input['attribute_options'];
-                        // $product->product_option = json_encode($option_array);
-                        // $product->product_option_api = json_encode($option_array_api);
-                        $product->shipping_id = $request->shipping_id;
-                        $product->theme_id = $store_id->theme_id;
-                        $product->store_id = getCurrentStore();
-                        $product->created_by = \Auth::user()->id;
-                        if ($request->custom_field_status == '1') {
-                            $product->custom_field_status = '1';
-                            $product->custom_field = json_encode($request->custom_field_repeater_basic);
-                        }
-                        $tag_data_id = [];
-                        $tag_ids =[];
-
-                        if(isset($request->tag_id)){
-                            foreach($request->tag_id as $tag){
-                                $tags = Tag::where('id' ,$tag)->where('store_id' ,getCurrentStore())->where('theme_id',APP_THEME())->first();
-                                if(!empty($tags)){
-                                    $tag_id = $tags->id;
-                                    $tag_ids[] = $tag_id;
-                                }else{
-                                $tag_id = 0;
-                                }
-                                if($tag_id != $tag){
-                                    $tag_data = new Tag();
-                                    $tag_data->name = $tag;
-                                    $tag_data->store_id = getCurrentStore();
-                                    $tag_data->theme_id = APP_THEME();
-                                    $tag_data->created_by = \Auth::user()->id;
-                                    $tag_data->save();
-
-                                    $tag_data_id[] = $tag_data->id;
-
-                                }
-                            }
-                        }
-                        $tag_product_id = array_merge($tag_data_id,$tag_ids);
-                        if(!empty($tag_product_id)){
-
-                            $product->tag_id =  implode(',',$tag_product_id);
-                        }
-                        $product->save();
-                        if (module_is_active('SizeGuideline')) {
-
-                            \Modules\SizeGuideline\app\Models\SizeGuideline::saveData($product, $request->size_chart_title,$request->size_chart_information);
-                        }
-                        if (module_is_active('ProductBarCode')) {
-
-                            \Modules\ProductBarCode\app\Models\ProductBarCode::saveData($product);
-                        }
-                        // if (!empty($product))
-                        // {
-                        //     //webhook
-                        //     $module = 'New Product';
-                        //     $webhook =  Utility::webhook($module, $store_id->id);
-                        //     if ($webhook) {
-                        //     $parameter = json_encode($product);
-                        //     // 1 parameter is  URL , 2 parameter is data , 3 parameter is method
-                        //     $status = Utility::WebhookCall($webhook['url'], $parameter, $webhook['method']);
-
-                        //     if ($status != true) {
-                        //         $msgs  = 'Webhook call failed.';
-                        //     }
-
-                        //     $msg['flag'] = 'success';
-                        //             // $msg['msg']  = __('Product Successfully Created') . ((isset($msgs)) ? '<br> <span class="text-danger">' . $msgs . '</span>' : '');
-                        //             $msg['msg']  = __('Product Successfully Created');
-                        //     }
-                        // } else {
-                        //     $msg['flag'] = 'error';
-                        //     $msg['msg']  = __('Product Created Failed');
-
-                        //     return redirect()->back()->with($msg['flag'], $msg['msg']);
-                        // }
-
-                        foreach ($request->product_image as $key => $image) {
-                            $theme_image = $image;
-
-                            $image_size = File::size($theme_image);
-                            $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-                            if ($result == 1) {
-                                $fileName = rand(10, 100) . '_' . time() . "_" . $image->getClientOriginalName();
-                                $pathss = Utility::keyWiseUpload_file($request, 'product_image', $fileName, $dir, $key, []);
-                            } else {
-                                $msg['flag'] = 'error';
-                                $msg['msg'] =  $result;
-
-                                return $msg;
-                            }
-
-                            if (isset($pathss['url'])) {
-                                $ProductImage = new ProductImage();
-                                $ProductImage->product_id = $product->id;
-                                $ProductImage->image_path = $pathss['url'];
-                                $ProductImage->image_url  = $pathss['full_url'];
-                                $ProductImage->theme_id   = $store_id->theme_id;
-                                $ProductImage->store_id   = getCurrentStore();
-                                $ProductImage->save();
-                            }
-                        }
-
-                        $options = [];
-                        $a_option = [];
-                        if ($request->has('choice_no')) {
-                            foreach ($request->choice_no as $key => $no) {
-                                $name = 'choice_options_' . $no;
-                                $my_str = implode('|', $request[$name]);
-                                array_push($options, explode(',', $my_str));
-                            }
-                        }
-
-                        $combinations = $this->combinations($options);
-                        foreach ($request->attribute_no as $key => $no) {
-                            $forVariationName = 'for_variation_' . $no;
-                            if ($request->has($forVariationName) && $request->input($forVariationName) == 1) {
-                                $name = 'attribute_options_' . $no;
-                                $options = 'options';
-                                $for_variation = isset($request->{'for_variation_' . $no}) ? $request->{'for_variation_' . $no} : 0;
-                                if ($for_variation == 1) {
-                                    if ($request->has($options) && is_array($request[$options])) {
-                                        $my_str = $request[$options];
-                                        $optionValues = [];
-
-                                        foreach ($request[$options] as $term) {
-                                            $optionValues[] = $term;
-                                        }
-                                        array_push($a_option, $my_str);
-                                    }
-                                }
-                            }
-                        }
-
-                        $default_variant_id = 0;
-                        if(!empty($a_option[0])){
-                            if (count($a_option[0]) > 0) {
-                                $product->variant_product = 1;
-                                $is_in_stock = false;
-                                foreach ($a_option as $key => $com) {
-                                    $str = '';
-                                    foreach ($com as $key => $item) {
-
-                                        $str = $item;
-
-                                        $product_stock = ProductVariant::where('product_id', $product->id)->where('variant', $str)->first();
-                                        if ($product_stock == null) {
-                                            $product_stock = new ProductVariant;
-                                            $product_stock->product_id = $product->id;
-
-                                        }
-
-                                        $theme_name = APP_THEME();
-                                        if ($request['downloadable_product_' . str_replace('.', '_', $str)]) {
-                                            $fileName = rand(10, 100) . '_' . time() . "_" . $request->file('downloadable_product_' . $str)->getClientOriginalName();
-
-                                            $path1 = Utility::upload_file($request, 'downloadable_product_' . $str, $fileName, $dir, []);
-                                            $product_stock->downloadable_product = $path1['url'];
-
-                                        }
-
-
-                                        $var_option = "";
-                                        $variation_option = !empty($request['variation_option_' . str_replace('.', '_', $str)]) ? $request['variation_option_' . str_replace('.', '_', $str)] : '';
-                                        if (is_array($variation_option)) {
-                                            foreach ($variation_option as $option) {
-                                                $var_option .= $option . ",";
-                                            }
-                                        }
-
-                                        $sku = str_replace(' ', '_', $request->name) . $request['product_sku_' . str_replace('.', '_', $str)];
-
-
-                                        $product_stock->variant = $str;
-
-                                        $product_stock->variation_option = $var_option;
-
-                                        $product_stock->price = !empty($request['product_sale_price_' . str_replace('.', '_', $str)]) ? $request['product_sale_price_' . str_replace('.', '_', $str)] : 0;
-
-                                        $product_stock->variation_price = !empty($request['product_variation_price_' . str_replace('.', '_', $str)]) ? $request['product_variation_price_' . str_replace('.', '_', $str)] : 0;
-                                        $product_stock->sku = $sku;
-
-                                        $product_stock->stock_status = !empty($request['stock_status_' . str_replace('.', '_', $str)]) ? $request['stock_status_' . str_replace('.', '_', $str)] : '';
-                                        if ($variation_option) {
-                                            if (in_array('manage_stock', $variation_option)) {
-                                                $product_stock->stock_order_status = !empty($request['stock_order_status_' . str_replace('.', '_', $str)]) ? $request['stock_order_status_' . str_replace('.', '_', $str)] : 0;
-
-                                                $product_stock->stock = !empty($request['product_stock_' . str_replace('.', '_', $str)]) ? $request['product_stock_' . str_replace('.', '_', $str)] : 0;
-                                                $product_stock->low_stock_threshold = !empty($request['low_stock_threshold_' . str_replace('.', '_', $str)]) ? $request['low_stock_threshold_' . str_replace('.', '_', $str)] : 0;
-                                            } else {
-
-                                                $product_stock->stock = 0;
-                                                $product_stock->stock_order_status = '';
-                                                $product_stock->low_stock_threshold = !empty($request['low_stock_threshold_' . str_replace('.', '_', $str)]) ? $request['low_stock_threshold_' . str_replace('.', '_', $str)] : 0;
-                                            }
-                                        }
-                                        $product_stock->weight = !empty($request['product_weight_' . str_replace('.', '_', $str)]) ? $request['product_weight_' . str_replace('.', '_', $str)] : 0;
-
-                                        $product_stock->description = !empty($request['product_description_' . str_replace('.', '_', $str)]) ? $request['product_description_' . str_replace('.', '_', $str)] : '';
-
-                                        $product_stock->shipping = !empty($request['shipping_id_' . str_replace('.', '_', $str)]) ? $request['shipping_id_' . str_replace('.', '_', $str)] : 'same_as_parent';
-
-                                        $product_stock->theme_id = APP_THEME();
-                                        $product_stock->store_id = getCurrentStore();
-                                        $product_stock->save();
-
-                                        if ($request->default_variant ==  '-' . $str) {
-                                            $product_update = Product::find($product->id);
-                                            $product_update->default_variant_id = $product_stock->id;
-                                            $product_update->save();
-                                        }
-                                        if ($product_stock->stock == 'in_stock') {
-                                            $is_in_stock = true;
-                                        }
-                                    }
-                                }
-                                if (!$is_in_stock) {
-                                    $product->stock = 'out_of_stock';
-                                }
-                            } else {
-                                $product->variant_product = 0;
-                            }
-                        }else{
-                            $product->variant_product = 0;
-
-                        }
+                    $Product->product_stock = !empty($request->product_stock) ? $request->product_stock : 0;
+                    if ($request->track_stock == 1) {
+                        $Product->track_stock = $request->track_stock;
+                        $Product->stock_order_status = $request->stock_order_status;
+                        $Product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold :  '';
                     } else {
-                        $msg['flag'] = 'error';
-                        $msg['msg'] =  __('Your Product limit is over, Please upgrade plan');
-
-                        return $msg;
+                        $Product->track_stock = !empty($request->track_stock) ? $request->track_stock : 0;
+                        $Product->stock_order_status = '';
+                        $Product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold :  '';
                     }
-                }
-
-                    $msg['flag'] = 'success';
-                    $msg['msg'] =  __('Product saved successfully.');
-                    return $msg;
-            } catch(\Exception $e){
-               \Log::info(['error' => $e]);
-                $msg['flag'] = 'error';
-                $msg['msg'] = $e->getMessage();
-                return $msg;
-            }
-        // }
-                // else
-                // {
-                //     return redirect()->back()->with('error', __('Permission denied.'));
-                // }
-
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        $link = env('APP_URL'). '/product/';
-        $MainCategory = MainCategory::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Category', '');
-        $SubCategory = SubCategory::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Category', '');
-        $Tax = Tax::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id');
-        $Tax_status = Tax::Taxstatus();
-        $Shipping = Shipping::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Shipping', '');
-        $preview_type = [
-            'Video File' => 'Video File',
-            'Video Url' => 'Video Url',
-            'iFrame' => 'iFrame'
-        ];
-        $ProductAttribute = ProductAttribute::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id');
-        $product_image = ProductImage::where('product_id' ,$product->id)->where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->get();
-        $get_tax = explode(',',$product->tax_id);
-        $get_datas = explode(',',$product->attribute_id);
-        $tag = Tag::where('store_id', getCurrentStore())->where('theme_id',APP_THEME())->pluck('name', 'id');
-        $get_tags = explode(',',$product->tag_id);
-
-        $brands = ProductBrand::where('status', 1)->where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Brand', '');
-        $labels = ProductLabel::where('status', 1)->where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Label', '');
-
-        $compact = ['link','product','MainCategory','Tax','Tax_status','Shipping','preview_type','ProductAttribute','SubCategory','product_image','get_tax','get_datas','tag' ,'get_tags', 'brands', 'labels'];
-        return view('product.edit', compact($compact));
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Product $product)
-    {
-        if (auth()->user()->isAbleTo('Edit Products')) {
-            // try{
-
-
-                $dir        = 'themes/' . APP_THEME() . '/uploads';
-
-                $rules = [
-                    'name' => 'required',
-                    'maincategory_id' => 'required',
-                    'status' => 'required',
-                    'variant_product' => 'required',
-                    'brand_id' => 'nullable',
-                    'label_id' => 'nullable',
-                ];
-                $validator = \Validator::make($request->all(), $rules);
-                if ($validator->fails()) {
-                    $messages = $validator->getMessageBag();
-                    $msg['flag'] = 'error';
-                    $msg['msg'] =  $messages->first();
-                    return $msg;
-
-                }
-
-                if ($request->cover_image) {
-                    $image_size = $request->file('cover_image')->getSize();
-                    $file_path =  $product->cover_image_path;
-
-                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-                    if ($result == 1) {
-                        Utility::changeStorageLimit(\Auth::user()->creatorId(), $file_path);
-
-                        $fileName = rand(10, 100) . '_' . time() . "_" . $request->cover_image->getClientOriginalName();
-                        $path = Utility::upload_file($request, 'cover_image', $fileName, $dir, []);
-                        if (File::exists(base_path($product->cover_image_path))) {
-                            File::delete(base_path($product->cover_image_path));
-                        }
-                    } else {
-                        $msg['flag'] = 'error';
-                        $msg['msg'] = $result;
-
-                        return $msg;
+                    if ($request->custom_field_status == '1') {
+                        $Product->custom_field_status = '1';
+                        $Product->custom_field = json_encode($request->custom_field_repeater_basic);
                     }
-                    $product->cover_image_path = $path['url'];
-                    $product->cover_image_url = $path['full_url'];
-                }
 
+                    if (!empty($request->downloadable_product)) {
+                        $image_size = $request->file('downloadable_product')->getSize();
+                        $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
 
-
-                $product->name = $request->name;
-                $product->slug = $request->slug;
-                $product->description = $request->description;
-                $product->specification = $request->specification;
-                $product->detail = $request->detail;
-                $product->stock_status = $request->stock_status;
-                $product->product_weight = $request->product_weight;
-                $tag_id = $request->tag;
-                $product->maincategory_id = $request->maincategory_id;
-                $product->subcategory_id = $request->subcategory_id;
-                if ($request->brand_id) {
-                    $product->brand_id = $request->brand_id ?? null;
-                }
-                if ($request->label_id) {
-                    $product->label_id = $request->label_id ?? null;
-                }
-
-                $product->tax_status = $request->tax_status;
-
-
-                if(!empty($request->tax_id)){
-                    $product->tax_id =implode(',',$request->tax_id);
-                }else{
-                    $tax = Tax::where('store_id' ,getCurrentStore())->where('theme_id',APP_THEME())->first();
-                    if(isset($tax))
-                    {
-                        $product->tax_id =$tax->id;
-                    }
-                }
-                $product->preview_type = $request->preview_type;
-                if (!empty($request->video_url)) {
-                    $product->preview_content = $request->video_url;
-                }
-                if (!empty($request->preview_video)) {
-                    $ext = $request->file('preview_video')->getClientOriginalExtension();
-                    $fileName = 'video_' . time() . rand() . '.' . $ext;
-
-                    $dir_video = 'themes/' . APP_THEME() . '/uploads/preview_image';
-
-                    $file_paths = $product->preview_video;
-                    $image_size = $request->file('preview_video')->getSize();
-                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-                    if ($result == 1) {
-                        Utility::changeStorageLimit(\Auth::user()->creatorId(), $file_paths);
-                        $path_video = Utility::upload_file($request, 'preview_video', $fileName, $dir_video, []);
-                        if ($path_video['flag'] == 1) {
-                            $url = $path_video['url'];
+                        if ($result == 1) {
+                            $fileName = rand(10, 100) . '_' . time() . "_" . $request->downloadable_product->getClientOriginalName();
+                            $path = Utility::upload_file($request, 'downloadable_product', $fileName, $dir, []);
                         } else {
                             $msg['flag'] = 'error';
-                            $msg['msg'] =$path_video['msg'];
+                            $msg['msg'] =  $result;
+
                             return $msg;
                         }
-                    } else {
-                        $msg['flag'] = 'error';
-                        $msg['msg'] =$result;
-                        return $msg;
+                        $Product->downloadable_product = $path['url'];
                     }
 
 
 
-                    $product->preview_content = $path_video['url'];
-                }
 
-                if (!empty($request->preview_iframe)) {
-                    $product->preview_content = $request->preview_iframe;
-                }
-                    $product->variant_product = $request->variant_product;
-                    $product->shipping_id = $request->shipping_id;
-                    $product->status = $request->status;
-                    $product->trending = $request->trending;
+                    $tag_data_id = [];
+                    $tag_ids = [];
 
+                    if (isset($request->tag_id)) {
 
-                if ($request->track_stock == 1) {
-                    $product->track_stock = $request->track_stock;
-                    $product->stock_order_status = $request->stock_order_status;
-                    $product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold : 0;
-                } else {
-                    $product->track_stock = $request->track_stock;
-                    $product->stock_order_status = '';
-                    $product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold : 0;
-                }
+                        foreach ($request->tag_id as $tag) {
+                            $tags = Tag::where('id', $tag)->where('store_id', getCurrentStore())->where('theme_id', APP_THEME())->first();
+                            if (!empty($tags)) {
+                                $tag_id = $tags->id;
+                                $tag_ids[] = $tag_id;
+                            } else {
+                                $tag_id = 0;
+                            }
+                            if ($tag_id != $tag) {
+                                $tag_data = new Tag();
+                                $tag_data->name = $tag;
+                                $tag_data->store_id = getCurrentStore();
+                                $tag_data->theme_id = APP_THEME();
+                                $tag_data->created_by = \Auth::user()->id;
+                                $tag_data->save();
 
-                if ($request->custom_field_status == '1') {
-                    $product->custom_field_status = '1';
-                    $product->custom_field = json_encode($request->custom_field_repeater_basic);
-                } else {
-                    $product->custom_field = NULL;
-                }
+                                $tag_data_id[] = $tag_data->id;
+                            }
+                        }
+                    }
+                    $tag_product_id = array_merge($tag_data_id, $tag_ids);
+                    if (!empty($tag_product_id)) {
 
-                if (!empty($request->downloadable_product))
-                {
-                    $image_size = $request->file('downloadable_product')->getSize();
-                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-                    $file_paths = $product->downloadable_product;
+                        $Product->tag_id =  implode(',', $tag_product_id);
+                    }
+                    $Product->store_id = getCurrentStore();
+                    $Product->theme_id = APP_THEME();
+                    $Product->created_by = \Auth::user()->id;
 
-                    if ($result == 1) {
-                        Utility::changeStorageLimit(\Auth::user()->creatorId(), $file_paths);
+                    $Product->save();
+                    if (module_is_active('SizeGuideline')) {
+                        \Modules\SizeGuideline\app\Models\SizeGuideline::saveData($Product, $request->size_chart_title, $request->size_chart_information);
+                    }
+                    if (module_is_active('ProductBarCode')) {
+                        \Modules\ProductBarCode\app\Models\ProductBarCode::saveData($Product);
+                    }
+                    // if (!empty($Product))
+                    // {
+                    //     //webhook
+                    //     $module = 'New Product';
+                    //     $webhook =  Utility::webhook($module, $store_id->id);
+                    //     if ($webhook) {
+                    //         $parameter = json_encode($Product);
+                    //         // 1 parameter is  URL , 2 parameter is data , 3 parameter is method
+                    //         $status = Utility::WebhookCall($webhook['url'], $parameter, $webhook['method']);
 
-                        $fileName = rand(10, 100) . '_' . time() . "_" . $request->downloadable_product->getClientOriginalName();
-                        $path = Utility::upload_file($request, 'downloadable_product', $fileName, $dir, []);
-                        if (File::exists(base_path($product->downloadable_product))) {
-                            File::delete(base_path($product->downloadable_product));
+                    //         if ($status != true) {
+                    //             $msgs  = 'Webhook call failed.';
+                    //         }
+
+                    //         $msg['flag'] = 'success';
+                    //         $msg['msg']  = __('Product Successfully Created') . ((isset($msgs)) ? '<br> <span class="text-danger">' . $msgs . '</span>' : '');
+                    //         // $msg['msg']  = __('Product Successfully Created');
+                    //     }
+                    // }
+                    foreach ($request->product_image as $key => $image) {
+                        $theme_image = $image;
+
+                        $image_size = File::size($theme_image);
+                        $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+                        if ($result == 1) {
+                            $fileName = rand(10, 100) . '_' . time() . "_" . $image->getClientOriginalName();
+                            $pathss = Utility::keyWiseUpload_file($request, 'product_image', $fileName, $dir, $key, []);
+                        } else {
+                            $msg['flag'] = 'error';
+                            $msg['msg'] =  $result;
+
+                            return $msg;
                         }
 
-                    } else {
-
-                        $msg['flag'] = 'error';
-                        $msg['msg'] =$result;
-                        return $msg;
+                        if (isset($pathss['url'])) {
+                            $ProductImage = new ProductImage();
+                            $ProductImage->product_id = $Product->id;
+                            $ProductImage->image_path = $pathss['url'];
+                            $ProductImage->image_url  = $pathss['full_url'];
+                            $ProductImage->theme_id   = $store_id->theme_id;
+                            $ProductImage->store_id   = getCurrentStore();
+                            $ProductImage->save();
+                        }
                     }
-                    $product->downloadable_product = $path['url'];
+                } else {
+                    $msg['flag'] = 'error';
+                    $msg['msg'] =   __('Your Product limit is over, Please upgrade plan');
+
+                    return $msg;
+                }
+            } else {
+
+                $input = $request->all();
+
+                $input['choice_options'] = [];
+                $input['attribute_options'] = [];
+                if ($request->has('choice_no')) {
+                    foreach ($request->choice_no as $key => $no) {
+                        $str = 'choice_options_' . $no;
+
+                        $item['attribute_id'] = $no;
+                        $item['values'] = explode(',', implode('|', $request[$str]));
+                        array_push($input['choice_options'], $item);
+                    }
                 }
 
+                if (!empty($request->choice_no)) {
+                    $input['attributes'] = json_encode($request->choice_no);
+                } else {
+                    $input['attributes'] = json_encode([]);
+                }
 
-                if(!empty($request->product_image)){
+                $input['choice_options'] = json_encode($input['choice_options']);
+                $input['slug'] = $input['name'];
+
+                if ($request->has('attribute_no')) {
+                    foreach ($request->attribute_no as $key => $no) {
+                        $str = 'attribute_options_' . $no;
+                        $enable_option = $input['visible_attribute_' . $no];
+                        $variation_option = $input['for_variation_' . $no];
+
+                        $item['attribute_id'] = $no;
+                        if (!empty($request[$str])) {
+                            $item['values'] = explode(',', implode('|', $request[$str]));
+                        } else {
+                            $item['values'] = [];
+                        }
+                        $item['visible_attribute_' . $no] = $enable_option;
+                        $item['for_variation_' . $no] = $variation_option;
+
+                        array_push($input['attribute_options'], $item);
+                    }
+                }
+                if (!empty($request->attribute_no)) {
+                    $input['product_attributes'] = implode(',', $request->attribute_no);
+                }
+                $input['attribute_options'] = json_encode($input['attribute_options']);
+
+                $theme_name = APP_THEME();
+                if ($request->cover_image) {
+
+                    $image_size = $request->file('cover_image')->getSize();
+                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+                    if ($result == 1) {
+                        $fileName = rand(10, 100) . '_' . time() . "_" . $request->cover_image->getClientOriginalName();
+                        $path = Utility::upload_file($request, 'cover_image', $fileName, $dir, []);
+                    } else {
+                        $msg['flag'] = 'error';
+                        $msg['msg'] =  $result;
+
+                        return $msg;
+                    }
+                }
+                if ($total_products < $plan->max_products || $plan->max_products == -1) {
+
+
+                    $product = new Product();
+                    $product->name = $request->name;
+                    $product->slug = $request->slug;
+                    $product->maincategory_id = $request->maincategory_id;
+                    $product->subcategory_id = $request->subcategory_id;
+                    if (!empty($request->tax_id)) {
+                        $product->tax_id = implode(',', $request->tax_id);
+                    } else {
+                        $tax = Tax::where('store_id', getCurrentStore())->where('theme_id', APP_THEME())->first();
+                        if (isset($tax)) {
+                            $product->tax_id = $tax->id;
+                        }
+                    }
+                    $product->tax_status = $request->tax_status;
+                    $product->shipping_id = $request->shipping_id;
+                    $product->status = $request->status;
+                    $product->description = $request->description;
+                    $product->specification = $request->specification;
+                    $product->detail = $request->detail;
+                    $tag_id = $request->tag;
+                    $product->cover_image_path = $path['url'] ?? null;
+                    $product->cover_image_url = $path['full_url'] ?? null;
+                    $product->attribute_id = $input['product_attributes'];
+                    $product->product_attribute = $input['attribute_options'];
+
+
+                    $product->preview_type = $request->preview_type;
+                    if (!empty($request->video_url)) {
+                        $product->preview_content = $request->video_url;
+                    }
+                    if (!empty($request->preview_video)) {
+                        $ext = $request->file('preview_video')->getClientOriginalExtension();
+                        $fileName = 'video_' . time() . rand() . '.' . $ext;
+
+                        $dir_video = 'themes/' . APP_THEME() . '/uploads/preview_image';
+
+                        $image_size = $request->file('preview_video')->getSize();
+                        $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+
+                        if ($result == 1) {
+                            $path_video = Utility::upload_file($request, 'preview_video', $fileName, $dir_video, []);
+                            if ($path_video['flag'] == 1) {
+                                $url = $path_video['url'];
+                            } else {
+                                $msg['flag'] = 'error';
+                                $msg['msg'] =  $path_video['msg'];
+
+                                return $msg;
+                            }
+                        } else {
+                            $msg['flag'] = 'error';
+                            $msg['msg'] =  $result;
+
+                            return $msg;
+                        }
+                        $product->preview_content = $path_video['url'];
+                    }
+                    if (!empty($request->preview_iframe)) {
+                        $product->preview_content = $request->preview_iframe;
+                    }
+                    if (!empty($request->downloadable_product)) {
+
+                        $image_size = $request->file('downloadable_product')->getSize();
+                        $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+
+                        if ($result == 1) {
+                            $fileName = rand(10, 100) . '_' . time() . "_" . $request->downloadable_product->getClientOriginalName();
+                            $path = Utility::upload_file($request, 'downloadable_product', $fileName, $dir, []);
+                        } else {
+                            $msg['flag'] = 'error';
+                            $msg['msg'] =  $result;
+
+                            return $msg;
+                        }
+                        $product->downloadable_product = $path['url'];
+                    }
+                    $product->product_stock = !empty($request->product_stock) ? $request->product_stock : 0;
+                    $product->variant_product = $request->variant_product;
+                    $product->trending = $request->trending;
+                    if ($request->track_stock == 1) {
+                        $product->track_stock = $request->track_stock;
+                        $product->stock_order_status = $request->stock_order_status;
+                        $product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold : 0;
+                    } else {
+                        $product->track_stock = $request->track_stock;
+                        $product->stock_order_status = '';
+                        $product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold : 0;
+                    }
+
+
+                    $product->attribute_id = $input['product_attributes'];
+                    $product->product_attribute = $input['attribute_options'];
+                    // $product->product_option = json_encode($option_array);
+                    // $product->product_option_api = json_encode($option_array_api);
+                    $product->shipping_id = $request->shipping_id;
+                    $product->theme_id = $store_id->theme_id;
+                    $product->store_id = getCurrentStore();
+                    $product->created_by = \Auth::user()->id;
+                    if ($request->custom_field_status == '1') {
+                        $product->custom_field_status = '1';
+                        $product->custom_field = json_encode($request->custom_field_repeater_basic);
+                    }
+                    $tag_data_id = [];
+                    $tag_ids = [];
+
+                    if (isset($request->tag_id)) {
+                        foreach ($request->tag_id as $tag) {
+                            $tags = Tag::where('id', $tag)->where('store_id', getCurrentStore())->where('theme_id', APP_THEME())->first();
+                            if (!empty($tags)) {
+                                $tag_id = $tags->id;
+                                $tag_ids[] = $tag_id;
+                            } else {
+                                $tag_id = 0;
+                            }
+                            if ($tag_id != $tag) {
+                                $tag_data = new Tag();
+                                $tag_data->name = $tag;
+                                $tag_data->store_id = getCurrentStore();
+                                $tag_data->theme_id = APP_THEME();
+                                $tag_data->created_by = \Auth::user()->id;
+                                $tag_data->save();
+
+                                $tag_data_id[] = $tag_data->id;
+                            }
+                        }
+                    }
+                    $tag_product_id = array_merge($tag_data_id, $tag_ids);
+                    if (!empty($tag_product_id)) {
+
+                        $product->tag_id =  implode(',', $tag_product_id);
+                    }
+                    $product->save();
+                    if (module_is_active('SizeGuideline')) {
+
+                        \Modules\SizeGuideline\app\Models\SizeGuideline::saveData($product, $request->size_chart_title, $request->size_chart_information);
+                    }
+                    if (module_is_active('ProductBarCode')) {
+
+                        \Modules\ProductBarCode\app\Models\ProductBarCode::saveData($product);
+                    }
+                    // if (!empty($product))
+                    // {
+                    //     //webhook
+                    //     $module = 'New Product';
+                    //     $webhook =  Utility::webhook($module, $store_id->id);
+                    //     if ($webhook) {
+                    //     $parameter = json_encode($product);
+                    //     // 1 parameter is  URL , 2 parameter is data , 3 parameter is method
+                    //     $status = Utility::WebhookCall($webhook['url'], $parameter, $webhook['method']);
+
+                    //     if ($status != true) {
+                    //         $msgs  = 'Webhook call failed.';
+                    //     }
+
+                    //     $msg['flag'] = 'success';
+                    //             // $msg['msg']  = __('Product Successfully Created') . ((isset($msgs)) ? '<br> <span class="text-danger">' . $msgs . '</span>' : '');
+                    //             $msg['msg']  = __('Product Successfully Created');
+                    //     }
+                    // } else {
+                    //     $msg['flag'] = 'error';
+                    //     $msg['msg']  = __('Product Created Failed');
+
+                    //     return redirect()->back()->with($msg['flag'], $msg['msg']);
+                    // }
 
                     foreach ($request->product_image as $key => $image) {
                         $theme_image = $image;
@@ -1030,194 +626,14 @@ class ProductController extends Controller
                             $ProductImage->product_id = $product->id;
                             $ProductImage->image_path = $pathss['url'];
                             $ProductImage->image_url  = $pathss['full_url'];
-                            $ProductImage->theme_id   = APP_THEME();
+                            $ProductImage->theme_id   = $store_id->theme_id;
                             $ProductImage->store_id   = getCurrentStore();
                             $ProductImage->save();
                         }
-
                     }
-                }
-
-                if ($request->variant_product == 0) {
-
-
-                    $product->price = $request->price;
-                    $product->sale_price = $request->sale_price;
-
-
-                    if ($request->track_stock == 0) {
-                        $product->product_stock = 0;
-                    } else {
-                        $product->product_stock = $request->product_stock;
-                    }
-
-
-                    $input = $request->all();
-
-                    $input['attribute_options'] = [];
-                    if ($request->has('attribute_no')) {
-                        foreach ($request->attribute_no as $key => $no) {
-                            $str = 'attribute_options_' . $no;
-                            $enable_option = $input['visible_attribute_' . $no];
-                            $variation_option = $input['for_variation_' . $no];
-
-                            $item['attribute_id'] = $no;
-
-                            $optionValues = [];
-                            if(isset($request[$str])){
-                                foreach ($request[$str] as $fValue) {
-                                    $id = ProductAttributeOption::where('terms', $fValue)->first()->toArray();
-                                    $optionValues[] = $id['id'];
-                                }
-                            }
-
-                            $item['values'] = explode(',', implode('|', $optionValues));
-                            $item['visible_attribute_' . $no] = $enable_option;
-                            $item['for_variation_' . $no] = $variation_option;
-                            array_push($input['attribute_options'], $item);
-                        }
-                    }
-
-                    if (!empty($request->attribute_no)) {
-                        $input['product_attributes'] = implode(',',$request->attribute_no);
-                    }
-                    else {
-                        $input['product_attributes'] = 0;
-                    }
-                    $input['attribute_options'] = json_encode($input['attribute_options']);
-                    $product->attribute_id = $input['product_attributes'];
-                    $product->product_attribute = $input['attribute_options'];
-                    $tag_data_id = [];
-                    $tag_ids =[];
-
-                    if(isset($request->tag_id)){
-
-                        foreach($request->tag_id as $tag){
-
-                            $tags = Tag::where('id' ,$tag)->where('store_id' ,getCurrentStore())->where('theme_id',APP_THEME())->first();
-
-                            if(!empty($tags)){
-                                $tag_id = $tags->id;
-                                $tag_ids[] = $tag_id;
-                            }else{
-                              $tag_id = 0;
-                            }
-                            if($tag_id != $tag){
-                                $tag_data = new Tag();
-                                $tag_data->name = $tag;
-                                $tag_data->store_id = getCurrentStore();
-                                $tag_data->theme_id = APP_THEME();
-                                $tag_data->created_by = \Auth::user()->id;
-                                $tag_data->save();
-
-                                $tag_data_id[] = $tag_data->id;
-
-                            }
-                        }
-                        $tag_product_id = array_merge($tag_data_id,$tag_ids);
-
-                        if(!empty($tag_product_id)){
-                            $product->tag_id =  implode(',',$tag_product_id);
-
-                        }
-                    }
-                    $product->save();
-
-
-                } else {
-
-                    $input = $request->all();
-                    $input['choice_options'] = [];
-                    $input['attribute_options'] = [];
-                    if ($request->has('choice_no')) {
-                        foreach ($request->choice_no as $key => $no) {
-                            $str = 'choice_options_' . $no;
-
-                            $item['attribute_id'] = $no;
-                            $item['values'] = explode(',', implode('|', $request[$str]));
-                            array_push($input['choice_options'], $item);
-                        }
-                    }
-
-                    if (!empty($request->choice_no)) {
-                        $input['attributes'] = json_encode($request->choice_no);
-                    } else {
-                        $input['attributes'] = json_encode([]);
-                    }
-
-                    $input['choice_options'] = json_encode($input['choice_options']);
-                    $input['slug'] = $input['name'];
-
-                    if ($request->has('attribute_no')) {
-                        foreach ($request->attribute_no as $key => $no) {
-                            $str = 'attribute_options_' . $no;
-                            $enable_option = $input['visible_attribute_' . $no];
-                            $variation_option = $input['for_variation_' . $no];
-
-                            $item['attribute_id'] = $no;
-                            $optionValues = [];
-                            if (isset($request[$str])) {
-                                foreach ($request[$str] as $fValue) {
-                                $id = ProductAttributeOption::where('terms', $fValue)->first()->toArray();
-                                $optionValues[] = $id['id'];
-                            }
-                        }
-                            $item['values'] = explode(',', implode('|', $optionValues));
-                            $item['visible_attribute_' . $no] = $enable_option;
-                            $item['for_variation_' . $no] = $variation_option;
-                            array_push($input['attribute_options'], $item);
-                        }
-                    }
-
-                    if (!empty($request->attribute_no)) {
-                        $input['product_attributes'] = implode(',',$request->attribute_no);
-                    } else {
-                        $input['product_attributes'] = json_encode([]);
-                    }
-                    $input['attribute_options'] = json_encode($input['attribute_options']);
-
-                    $product->price = 0;
-                    $product->product_stock = 0;
-                    $product->attribute_id = $input['product_attributes'];
-                    $product->product_attribute = $input['attribute_options'];
-
-                    $product->preview_type = $request->preview_type;
-                    if (!empty($request->video_url)) {
-                        $product->preview_content = $request->video_url;
-                
-                    }
-                    if (!empty($request->preview_video)) {
-                        $ext = $request->file('preview_video')->getClientOriginalExtension();
-                        $fileName = 'video_' . time() . rand() . '.' . $ext;
-
-                        $dir_video = 'themes/' . APP_THEME() . '/uploads/preview_image';
-                        $file_paths = $product->preview_video;
-                        $image_size = $request->file('preview_video')->getSize();
-                        $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
-                        if ($result == 1) {
-                            $path_video = Utility::upload_file($request, 'preview_video', $fileName, $dir_video, []);
-                            if ($path_video['flag'] == 1) {
-                                $url = $path_video['url'];
-                            } else {
-                                return redirect()->back()->with('error', __($path_video['msg']));
-                            }
-                        } else {
-                            return redirect()->back()->with('error', $result);
-                        }
-                        $product->preview_content = $path_video['url'];
-                    }
-                    if (!empty($request->preview_iframe)) {
-                        $product->preview_content = $request->preview_iframe;
-                    }
-                    $product->shipping_id = $request->shipping_id;
-                    if ($request->custom_field_status == '1') {
-                        $product->custom_field = json_encode($request->custom_field_repeater_basic);
-                    } else {
-                        $product->custom_field = NULL;
-                    }
-                    $product->save();
 
                     $options = [];
+                    $a_option = [];
                     if ($request->has('choice_no')) {
                         foreach ($request->choice_no as $key => $no) {
                             $name = 'choice_options_' . $no;
@@ -1226,114 +642,36 @@ class ProductController extends Controller
                         }
                     }
 
-                    $sku_array = [];
-                    $total_stock = 0;
                     $combinations = $this->combinations($options);
-                    if (count($combinations[0]) > 0) {
-                        $product->variant_product = 1;
-                        foreach ($combinations as $key => $combination) {
-                            $str = '';
-                            foreach ($combination as $key => $item) {
-                                if ($key > 0) {
-                                    $str .= '-' . str_replace(' ', '', $item);
-                                } else {
-                                    $str .= str_replace(' ', '', $item);
-                                }
-                            }
+                    foreach ($request->attribute_no as $key => $no) {
+                        $forVariationName = 'for_variation_' . $no;
+                        if ($request->has($forVariationName) && $request->input($forVariationName) == 1) {
+                            $name = 'attribute_options_' . $no;
+                            $options = 'options';
+                            $for_variation = isset($request->{'for_variation_' . $no}) ? $request->{'for_variation_' . $no} : 0;
+                            if ($for_variation == 1) {
+                                if ($request->has($options) && is_array($request[$options])) {
+                                    $my_str = $request[$options];
+                                    $optionValues = [];
 
-                            $product_stock = ProductVariant::where('product_id', $product->id)->where('variant', $str)->first();
-                            if ($product_stock == null) {
-                                $product_stock = new ProductVariant;
-                                $product_stock->product_id = $product->id;
-                            }
-                            array_push($sku_array, $str);
-
-                            $sku = str_replace(' ', '_', $request->name) . $request['sku_' . str_replace('.', '_', $str)];
-                            $total_stock += $request['stock_' . str_replace('.', '_', $str)];
-                            $product_stock->variant = $str;
-                            $product_stock->price = $request['price_' . str_replace('.', '_', $str)];
-                            $product_stock->sku = $sku;
-                            $product_stock->stock = $request['stock_' . str_replace('.', '_', $str)];
-                            $product_stock->theme_id = APP_THEME();
-
-
-                            $product_stock->save();
-
-
-                            if ($request->default_variant == '-' . $str) {
-                                $product_update = Product::find($product->id);
-                                $product_update->default_variant_id = $product_stock->id;
-                                $product_update->save();
-                            }
-                        }
-                        ProductVariant::where('product_id', $product->id)->where('theme_id', APP_THEME())->whereNotIn('variant', $sku_array)->delete();
-                        $product->product_stock = $total_stock;
-                        $tag_data_id = [];
-                        $tag_ids =[];
-                        if(isset($request->tag_id)){
-
-                            foreach($request->tag_id as $tag){
-                                $tags = Tag::where('id' ,$tag)->where('store_id' ,getCurrentStore())->where('theme_id',APP_THEME())->first();
-                                if(!empty($tags)){
-                                    $tag_id = $tags->id;
-                                    $tag_ids[] = $tag_id;
-                                }else{
-                                $tag_id = 0;
-                                }
-                                if($tag_id != $tag){
-                                    $tag_data = new Tag();
-                                    $tag_data->name = $tag;
-                                    $tag_data->store_id = getCurrentStore();
-                                    $tag_data->theme_id = APP_THEME();
-                                    $tag_data->created_by = \Auth::user()->id;
-                                    $tag_data->save();
-
-                                    $tag_data_id[] = $tag_data->id;
-
-                                }
-                            }
-                        }
-                        $tag_product_id = array_merge($tag_data_id,$tag_ids);
-                        if(!empty($tag_product_id)){
-
-                            $product->tag_id =  implode(',',$tag_product_id);
-                        }
-                        $product->save();
-                    } else {
-                        $product->variant_product = 0;
-                    }
-
-                    $attribute_option = [];
-                    if ($request->attribute_no) {
-                        foreach ($request->attribute_no as $key => $no) {
-                            $forVariationName = 'for_variation_' . $no;
-                            if ($request->has($forVariationName) && $request->input($forVariationName) == 1) {
-                                $name = 'attribute_options_' . $no;
-                                $options_data = 'options_datas';
-                                $for_variation = isset($request->{'for_variation_' . $no}) ? $request->{'for_variation_' . $no} : 0;
-                                if ($for_variation == 1) {
-                                    if ($request->has($options_data) && is_array($request[$options_data])) {
-                                        $my_str = $request[$options_data];
-                                        $optionValues = [];
-
-                                        foreach ($request[$options_data] as $term) {
-
-                                            $optionValues[] = $term;
-                                        }
-
-                                        array_push($attribute_option, $my_str);
+                                    foreach ($request[$options] as $term) {
+                                        $optionValues[] = $term;
                                     }
+                                    array_push($a_option, $my_str);
                                 }
                             }
                         }
                     }
-                    if ($attribute_option) {
-                        if (count($attribute_option[0]) > 0) {
+
+                    $default_variant_id = 0;
+                    if (!empty($a_option[0])) {
+                        if (count($a_option[0]) > 0) {
                             $product->variant_product = 1;
                             $is_in_stock = false;
-                            foreach ($attribute_option as $key => $com) {
+                            foreach ($a_option as $key => $com) {
                                 $str = '';
                                 foreach ($com as $key => $item) {
+
                                     $str = $item;
 
                                     $product_stock = ProductVariant::where('product_id', $product->id)->where('variant', $str)->first();
@@ -1353,7 +691,6 @@ class ProductController extends Controller
 
                                     $var_option = "";
                                     $variation_option = !empty($request['variation_option_' . str_replace('.', '_', $str)]) ? $request['variation_option_' . str_replace('.', '_', $str)] : '';
-
                                     if (is_array($variation_option)) {
                                         foreach ($variation_option as $option) {
                                             $var_option .= $option . ",";
@@ -1361,14 +698,9 @@ class ProductController extends Controller
                                     }
 
                                     $sku = str_replace(' ', '_', $request->name) . $request['product_sku_' . str_replace('.', '_', $str)];
+
+
                                     $product_stock->variant = $str;
-
-                                    if ($product_stock->track_stock == 1) {
-                                        $product_stock->stock_status = '';
-                                    } else {
-
-                                        $product_stock->stock_status = !empty($request['stock_status_' . str_replace('.', '_', $str)]) ? $request['stock_status_' . str_replace('.', '_', $str)] : '';
-                                    }
 
                                     $product_stock->variation_option = $var_option;
 
@@ -1377,13 +709,21 @@ class ProductController extends Controller
                                     $product_stock->variation_price = !empty($request['product_variation_price_' . str_replace('.', '_', $str)]) ? $request['product_variation_price_' . str_replace('.', '_', $str)] : 0;
                                     $product_stock->sku = $sku;
 
-                                    $product_stock->stock = !empty($request['product_stock_' . str_replace('.', '_', $str)]) ? $request['product_stock_' . str_replace('.', '_', $str)] : 0;
+                                    $product_stock->stock_status = !empty($request['stock_status_' . str_replace('.', '_', $str)]) ? $request['stock_status_' . str_replace('.', '_', $str)] : '';
+                                    if ($variation_option) {
+                                        if (in_array('manage_stock', $variation_option)) {
+                                            $product_stock->stock_order_status = !empty($request['stock_order_status_' . str_replace('.', '_', $str)]) ? $request['stock_order_status_' . str_replace('.', '_', $str)] : 0;
 
-                                    $product_stock->low_stock_threshold = !empty($request['low_stock_threshold_' . str_replace('.', '_', $str)]) ? $request['low_stock_threshold_' . str_replace('.', '_', $str)] : 0;
+                                            $product_stock->stock = !empty($request['product_stock_' . str_replace('.', '_', $str)]) ? $request['product_stock_' . str_replace('.', '_', $str)] : 0;
+                                            $product_stock->low_stock_threshold = !empty($request['low_stock_threshold_' . str_replace('.', '_', $str)]) ? $request['low_stock_threshold_' . str_replace('.', '_', $str)] : 0;
+                                        } else {
 
+                                            $product_stock->stock = 0;
+                                            $product_stock->stock_order_status = '';
+                                            $product_stock->low_stock_threshold = !empty($request['low_stock_threshold_' . str_replace('.', '_', $str)]) ? $request['low_stock_threshold_' . str_replace('.', '_', $str)] : 0;
+                                        }
+                                    }
                                     $product_stock->weight = !empty($request['product_weight_' . str_replace('.', '_', $str)]) ? $request['product_weight_' . str_replace('.', '_', $str)] : 0;
-
-                                    $product_stock->stock_order_status = !empty($request['stock_order_status_' . str_replace('.', '_', $str)]) ? $request['stock_order_status_' . str_replace('.', '_', $str)] : 0;
 
                                     $product_stock->description = !empty($request['product_description_' . str_replace('.', '_', $str)]) ? $request['product_description_' . str_replace('.', '_', $str)] : '';
 
@@ -1398,14 +738,10 @@ class ProductController extends Controller
                                         $product_update->default_variant_id = $product_stock->id;
                                         $product_update->save();
                                     }
-
                                     if ($product_stock->stock == 'in_stock') {
                                         $is_in_stock = true;
                                     }
                                 }
-                                ProductVariant::where('product_id', $product->id)
-                                    ->whereNotIn('variant', $com)
-                                    ->delete();
                             }
                             if (!$is_in_stock) {
                                 $product->stock = 'out_of_stock';
@@ -1413,38 +749,665 @@ class ProductController extends Controller
                         } else {
                             $product->variant_product = 0;
                         }
+                    } else {
+                        $product->variant_product = 0;
                     }
+                } else {
+                    $msg['flag'] = 'error';
+                    $msg['msg'] =  __('Your Product limit is over, Please upgrade plan');
+
+                    return $msg;
+                }
+            }
+
+            $msg['flag'] = 'success';
+            $msg['msg'] =  __('Product saved successfully.');
+            return $msg;
+        } catch (\Exception $e) {
+            \Log::info(['error' => $e]);
+            $msg['flag'] = 'error';
+            $msg['msg'] = $e->getMessage();
+            return $msg;
+        }
+        // }
+        // else
+        // {
+        //     return redirect()->back()->with('error', __('Permission denied.'));
+        // }
+
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Product $product)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Product $product)
+    {
+        $link = env('APP_URL') . '/product/';
+        $MainCategory = MainCategory::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Category', '');
+        $SubCategory = SubCategory::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Category', '');
+        $Tax = Tax::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id');
+        $Tax_status = Tax::Taxstatus();
+        $Shipping = Shipping::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Shipping', '');
+        $preview_type = [
+            'Video File' => 'Video File',
+            'Video Url' => 'Video Url',
+            'iFrame' => 'iFrame'
+        ];
+        $ProductAttribute = ProductAttribute::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id');
+        $product_image = ProductImage::where('product_id', $product->id)->where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->get();
+        $get_tax = explode(',', $product->tax_id);
+        $get_datas = explode(',', $product->attribute_id);
+        $tag = Tag::where('store_id', getCurrentStore())->where('theme_id', APP_THEME())->pluck('name', 'id');
+        $get_tags = explode(',', $product->tag_id);
+
+        $brands = ProductBrand::where('status', 1)->where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Brand', '');
+        $labels = ProductLabel::where('status', 1)->where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Select Label', '');
+
+        $compact = ['link', 'product', 'MainCategory', 'Tax', 'Tax_status', 'Shipping', 'preview_type', 'ProductAttribute', 'SubCategory', 'product_image', 'get_tax', 'get_datas', 'tag', 'get_tags', 'brands', 'labels'];
+        return view('product.edit', compact($compact));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Product $product)
+    {
+        if (auth()->user()->isAbleTo('Edit Products')) {
+            // try{
+
+
+            $dir        = 'themes/' . APP_THEME() . '/uploads';
+
+            $rules = [
+                'name' => 'required',
+                'maincategory_id' => 'required',
+                'status' => 'required',
+                'variant_product' => 'required',
+                'brand_id' => 'nullable',
+                'label_id' => 'nullable',
+            ];
+            $validator = \Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                $messages = $validator->getMessageBag();
+                $msg['flag'] = 'error';
+                $msg['msg'] =  $messages->first();
+                return $msg;
+            }
+
+            if ($request->cover_image) {
+                $image_size = $request->file('cover_image')->getSize();
+                $file_path =  $product->cover_image_path;
+
+                $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+                if ($result == 1) {
+                    Utility::changeStorageLimit(\Auth::user()->creatorId(), $file_path);
+
+                    $fileName = rand(10, 100) . '_' . time() . "_" . $request->cover_image->getClientOriginalName();
+                    $path = Utility::upload_file($request, 'cover_image', $fileName, $dir, []);
+                    if (File::exists(base_path($product->cover_image_path))) {
+                        File::delete(base_path($product->cover_image_path));
+                    }
+                } else {
+                    $msg['flag'] = 'error';
+                    $msg['msg'] = $result;
+
+                    return $msg;
+                }
+                $product->cover_image_path = $path['url'];
+                $product->cover_image_url = $path['full_url'];
+            }
+
+
+
+            $product->name = $request->name;
+            $product->slug = $request->slug;
+            $product->description = $request->description;
+            $product->specification = $request->specification;
+            $product->detail = $request->detail;
+            $product->stock_status = $request->stock_status;
+            $product->product_weight = $request->product_weight;
+            $tag_id = $request->tag;
+            $product->maincategory_id = $request->maincategory_id;
+            $product->subcategory_id = $request->subcategory_id;
+            if ($request->brand_id) {
+                $product->brand_id = $request->brand_id ?? null;
+            }
+            if ($request->label_id) {
+                $product->label_id = $request->label_id ?? null;
+            }
+
+            $product->tax_status = $request->tax_status;
+
+
+            if (!empty($request->tax_id)) {
+                $product->tax_id = implode(',', $request->tax_id);
+            } else {
+                $tax = Tax::where('store_id', getCurrentStore())->where('theme_id', APP_THEME())->first();
+                if (isset($tax)) {
+                    $product->tax_id = $tax->id;
+                }
+            }
+            $product->preview_type = $request->preview_type;
+            if (!empty($request->video_url)) {
+                $product->preview_content = $request->video_url;
+            }
+            if (!empty($request->preview_video)) {
+                $ext = $request->file('preview_video')->getClientOriginalExtension();
+                $fileName = 'video_' . time() . rand() . '.' . $ext;
+
+                $dir_video = 'themes/' . APP_THEME() . '/uploads/preview_image';
+
+                $file_paths = $product->preview_video;
+                $image_size = $request->file('preview_video')->getSize();
+                $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+                if ($result == 1) {
+                    Utility::changeStorageLimit(\Auth::user()->creatorId(), $file_paths);
+                    $path_video = Utility::upload_file($request, 'preview_video', $fileName, $dir_video, []);
+                    if ($path_video['flag'] == 1) {
+                        $url = $path_video['url'];
+                    } else {
+                        $msg['flag'] = 'error';
+                        $msg['msg'] = $path_video['msg'];
+                        return $msg;
+                    }
+                } else {
+                    $msg['flag'] = 'error';
+                    $msg['msg'] = $result;
+                    return $msg;
                 }
 
 
-                $firebase_enabled = Utility::GetValueByName('firebase_enabled');
-                if (!empty($firebase_enabled) && $firebase_enabled == 'on') {
-                    $fcm_Key = Utility::GetValueByName('fcm_Key');
-                    if (!empty($fcm_Key)) {
-                        $NotifyUsers = NotifyUser::where('product_id', $product->id)->get();
-                        if (!empty($NotifyUsers)) {
-                            foreach ($NotifyUsers as $key => $value) {
-                                $User_data = User::find($value->user_id);
-                                if (!empty($User_data->firebase_token)) {
-                                    $device_id = $User_data->firebase_token;
-                                    $message = 'now ' . $product->name . ' is available in stock';
-                                    Utility::sendFCM($device_id, $fcm_Key, $message);
-                                    NotifyUser::where('product_id', $product->id)->where('user_id', $User_data->id)->delete();
+
+                $product->preview_content = $path_video['url'];
+            }
+
+            if (!empty($request->preview_iframe)) {
+                $product->preview_content = $request->preview_iframe;
+            }
+            $product->variant_product = $request->variant_product;
+            $product->shipping_id = $request->shipping_id;
+            $product->status = $request->status;
+            $product->trending = $request->trending;
+
+
+            if ($request->track_stock == 1) {
+                $product->track_stock = $request->track_stock;
+                $product->stock_order_status = $request->stock_order_status;
+                $product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold : 0;
+            } else {
+                $product->track_stock = $request->track_stock;
+                $product->stock_order_status = '';
+                $product->low_stock_threshold = !empty($request->low_stock_threshold) ? $request->low_stock_threshold : 0;
+            }
+
+            if ($request->custom_field_status == '1') {
+                $product->custom_field_status = '1';
+                $product->custom_field = json_encode($request->custom_field_repeater_basic);
+            } else {
+                $product->custom_field = NULL;
+            }
+
+            if (!empty($request->downloadable_product)) {
+                $image_size = $request->file('downloadable_product')->getSize();
+                $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+                $file_paths = $product->downloadable_product;
+
+                if ($result == 1) {
+                    Utility::changeStorageLimit(\Auth::user()->creatorId(), $file_paths);
+
+                    $fileName = rand(10, 100) . '_' . time() . "_" . $request->downloadable_product->getClientOriginalName();
+                    $path = Utility::upload_file($request, 'downloadable_product', $fileName, $dir, []);
+                    if (File::exists(base_path($product->downloadable_product))) {
+                        File::delete(base_path($product->downloadable_product));
+                    }
+                } else {
+
+                    $msg['flag'] = 'error';
+                    $msg['msg'] = $result;
+                    return $msg;
+                }
+                $product->downloadable_product = $path['url'];
+            }
+
+
+            if (!empty($request->product_image)) {
+
+                foreach ($request->product_image as $key => $image) {
+                    $theme_image = $image;
+
+                    $image_size = File::size($theme_image);
+                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+                    if ($result == 1) {
+                        $fileName = rand(10, 100) . '_' . time() . "_" . $image->getClientOriginalName();
+                        $pathss = Utility::keyWiseUpload_file($request, 'product_image', $fileName, $dir, $key, []);
+                    } else {
+                        $msg['flag'] = 'error';
+                        $msg['msg'] =  $result;
+
+                        return $msg;
+                    }
+
+                    if (isset($pathss['url'])) {
+                        $ProductImage = new ProductImage();
+                        $ProductImage->product_id = $product->id;
+                        $ProductImage->image_path = $pathss['url'];
+                        $ProductImage->image_url  = $pathss['full_url'];
+                        $ProductImage->theme_id   = APP_THEME();
+                        $ProductImage->store_id   = getCurrentStore();
+                        $ProductImage->save();
+                    }
+                }
+            }
+
+            if ($request->variant_product == 0) {
+
+
+                $product->price = $request->price;
+                $product->sale_price = $request->sale_price;
+
+
+                if ($request->track_stock == 0) {
+                    $product->product_stock = 0;
+                } else {
+                    $product->product_stock = $request->product_stock;
+                }
+
+
+                $input = $request->all();
+
+                $input['attribute_options'] = [];
+                if ($request->has('attribute_no')) {
+                    foreach ($request->attribute_no as $key => $no) {
+                        $str = 'attribute_options_' . $no;
+                        $enable_option = $input['visible_attribute_' . $no];
+                        $variation_option = $input['for_variation_' . $no];
+
+                        $item['attribute_id'] = $no;
+
+                        $optionValues = [];
+                        if (isset($request[$str])) {
+                            foreach ($request[$str] as $fValue) {
+                                $id = ProductAttributeOption::where('terms', $fValue)->first()->toArray();
+                                $optionValues[] = $id['id'];
+                            }
+                        }
+
+                        $item['values'] = explode(',', implode('|', $optionValues));
+                        $item['visible_attribute_' . $no] = $enable_option;
+                        $item['for_variation_' . $no] = $variation_option;
+                        array_push($input['attribute_options'], $item);
+                    }
+                }
+
+                if (!empty($request->attribute_no)) {
+                    $input['product_attributes'] = implode(',', $request->attribute_no);
+                } else {
+                    $input['product_attributes'] = 0;
+                }
+                $input['attribute_options'] = json_encode($input['attribute_options']);
+                $product->attribute_id = $input['product_attributes'];
+                $product->product_attribute = $input['attribute_options'];
+                $tag_data_id = [];
+                $tag_ids = [];
+
+                if (isset($request->tag_id)) {
+
+                    foreach ($request->tag_id as $tag) {
+
+                        $tags = Tag::where('id', $tag)->where('store_id', getCurrentStore())->where('theme_id', APP_THEME())->first();
+
+                        if (!empty($tags)) {
+                            $tag_id = $tags->id;
+                            $tag_ids[] = $tag_id;
+                        } else {
+                            $tag_id = 0;
+                        }
+                        if ($tag_id != $tag) {
+                            $tag_data = new Tag();
+                            $tag_data->name = $tag;
+                            $tag_data->store_id = getCurrentStore();
+                            $tag_data->theme_id = APP_THEME();
+                            $tag_data->created_by = \Auth::user()->id;
+                            $tag_data->save();
+
+                            $tag_data_id[] = $tag_data->id;
+                        }
+                    }
+                    $tag_product_id = array_merge($tag_data_id, $tag_ids);
+
+                    if (!empty($tag_product_id)) {
+                        $product->tag_id =  implode(',', $tag_product_id);
+                    }
+                }
+                $product->save();
+            } else {
+
+                $input = $request->all();
+                $input['choice_options'] = [];
+                $input['attribute_options'] = [];
+                if ($request->has('choice_no')) {
+                    foreach ($request->choice_no as $key => $no) {
+                        $str = 'choice_options_' . $no;
+
+                        $item['attribute_id'] = $no;
+                        $item['values'] = explode(',', implode('|', $request[$str]));
+                        array_push($input['choice_options'], $item);
+                    }
+                }
+
+                if (!empty($request->choice_no)) {
+                    $input['attributes'] = json_encode($request->choice_no);
+                } else {
+                    $input['attributes'] = json_encode([]);
+                }
+
+                $input['choice_options'] = json_encode($input['choice_options']);
+                $input['slug'] = $input['name'];
+
+                if ($request->has('attribute_no')) {
+                    foreach ($request->attribute_no as $key => $no) {
+                        $str = 'attribute_options_' . $no;
+                        $enable_option = $input['visible_attribute_' . $no];
+                        $variation_option = $input['for_variation_' . $no];
+
+                        $item['attribute_id'] = $no;
+                        $optionValues = [];
+                        if (isset($request[$str])) {
+                            foreach ($request[$str] as $fValue) {
+                                $id = ProductAttributeOption::where('terms', $fValue)->first()->toArray();
+                                $optionValues[] = $id['id'];
+                            }
+                        }
+                        $item['values'] = explode(',', implode('|', $optionValues));
+                        $item['visible_attribute_' . $no] = $enable_option;
+                        $item['for_variation_' . $no] = $variation_option;
+                        array_push($input['attribute_options'], $item);
+                    }
+                }
+
+                if (!empty($request->attribute_no)) {
+                    $input['product_attributes'] = implode(',', $request->attribute_no);
+                } else {
+                    $input['product_attributes'] = json_encode([]);
+                }
+                $input['attribute_options'] = json_encode($input['attribute_options']);
+
+                $product->price = 0;
+                $product->product_stock = 0;
+                $product->attribute_id = $input['product_attributes'];
+                $product->product_attribute = $input['attribute_options'];
+
+                $product->preview_type = $request->preview_type;
+                if (!empty($request->video_url)) {
+                    $product->preview_content = $request->video_url;
+                }
+                if (!empty($request->preview_video)) {
+                    $ext = $request->file('preview_video')->getClientOriginalExtension();
+                    $fileName = 'video_' . time() . rand() . '.' . $ext;
+
+                    $dir_video = 'themes/' . APP_THEME() . '/uploads/preview_image';
+                    $file_paths = $product->preview_video;
+                    $image_size = $request->file('preview_video')->getSize();
+                    $result = Utility::updateStorageLimit(\Auth::user()->creatorId(), $image_size);
+                    if ($result == 1) {
+                        $path_video = Utility::upload_file($request, 'preview_video', $fileName, $dir_video, []);
+                        if ($path_video['flag'] == 1) {
+                            $url = $path_video['url'];
+                        } else {
+                            return redirect()->back()->with('error', __($path_video['msg']));
+                        }
+                    } else {
+                        return redirect()->back()->with('error', $result);
+                    }
+                    $product->preview_content = $path_video['url'];
+                }
+                if (!empty($request->preview_iframe)) {
+                    $product->preview_content = $request->preview_iframe;
+                }
+                $product->shipping_id = $request->shipping_id;
+                if ($request->custom_field_status == '1') {
+                    $product->custom_field = json_encode($request->custom_field_repeater_basic);
+                } else {
+                    $product->custom_field = NULL;
+                }
+                $product->save();
+
+                $options = [];
+                if ($request->has('choice_no')) {
+                    foreach ($request->choice_no as $key => $no) {
+                        $name = 'choice_options_' . $no;
+                        $my_str = implode('|', $request[$name]);
+                        array_push($options, explode(',', $my_str));
+                    }
+                }
+
+                $sku_array = [];
+                $total_stock = 0;
+                $combinations = $this->combinations($options);
+                if (count($combinations[0]) > 0) {
+                    $product->variant_product = 1;
+                    foreach ($combinations as $key => $combination) {
+                        $str = '';
+                        foreach ($combination as $key => $item) {
+                            if ($key > 0) {
+                                $str .= '-' . str_replace(' ', '', $item);
+                            } else {
+                                $str .= str_replace(' ', '', $item);
+                            }
+                        }
+
+                        $product_stock = ProductVariant::where('product_id', $product->id)->where('variant', $str)->first();
+                        if ($product_stock == null) {
+                            $product_stock = new ProductVariant;
+                            $product_stock->product_id = $product->id;
+                        }
+                        array_push($sku_array, $str);
+
+                        $sku = str_replace(' ', '_', $request->name) . $request['sku_' . str_replace('.', '_', $str)];
+                        $total_stock += $request['stock_' . str_replace('.', '_', $str)];
+                        $product_stock->variant = $str;
+                        $product_stock->price = $request['price_' . str_replace('.', '_', $str)];
+                        $product_stock->sku = $sku;
+                        $product_stock->stock = $request['stock_' . str_replace('.', '_', $str)];
+                        $product_stock->theme_id = APP_THEME();
+
+
+                        $product_stock->save();
+
+
+                        if ($request->default_variant == '-' . $str) {
+                            $product_update = Product::find($product->id);
+                            $product_update->default_variant_id = $product_stock->id;
+                            $product_update->save();
+                        }
+                    }
+                    ProductVariant::where('product_id', $product->id)->where('theme_id', APP_THEME())->whereNotIn('variant', $sku_array)->delete();
+                    $product->product_stock = $total_stock;
+                    $tag_data_id = [];
+                    $tag_ids = [];
+                    if (isset($request->tag_id)) {
+
+                        foreach ($request->tag_id as $tag) {
+                            $tags = Tag::where('id', $tag)->where('store_id', getCurrentStore())->where('theme_id', APP_THEME())->first();
+                            if (!empty($tags)) {
+                                $tag_id = $tags->id;
+                                $tag_ids[] = $tag_id;
+                            } else {
+                                $tag_id = 0;
+                            }
+                            if ($tag_id != $tag) {
+                                $tag_data = new Tag();
+                                $tag_data->name = $tag;
+                                $tag_data->store_id = getCurrentStore();
+                                $tag_data->theme_id = APP_THEME();
+                                $tag_data->created_by = \Auth::user()->id;
+                                $tag_data->save();
+
+                                $tag_data_id[] = $tag_data->id;
+                            }
+                        }
+                    }
+                    $tag_product_id = array_merge($tag_data_id, $tag_ids);
+                    if (!empty($tag_product_id)) {
+
+                        $product->tag_id =  implode(',', $tag_product_id);
+                    }
+                    $product->save();
+                } else {
+                    $product->variant_product = 0;
+                }
+
+                $attribute_option = [];
+                if ($request->attribute_no) {
+                    foreach ($request->attribute_no as $key => $no) {
+                        $forVariationName = 'for_variation_' . $no;
+                        if ($request->has($forVariationName) && $request->input($forVariationName) == 1) {
+                            $name = 'attribute_options_' . $no;
+                            $options_data = 'options_datas';
+                            $for_variation = isset($request->{'for_variation_' . $no}) ? $request->{'for_variation_' . $no} : 0;
+                            if ($for_variation == 1) {
+                                if ($request->has($options_data) && is_array($request[$options_data])) {
+                                    $my_str = $request[$options_data];
+                                    $optionValues = [];
+
+                                    foreach ($request[$options_data] as $term) {
+
+                                        $optionValues[] = $term;
+                                    }
+
+                                    array_push($attribute_option, $my_str);
                                 }
                             }
                         }
                     }
                 }
-                if (module_is_active('SizeGuideline')) {
+                if ($attribute_option) {
+                    if (count($attribute_option[0]) > 0) {
+                        $product->variant_product = 1;
+                        $is_in_stock = false;
+                        foreach ($attribute_option as $key => $com) {
+                            $str = '';
+                            foreach ($com as $key => $item) {
+                                $str = $item;
 
-                    \Modules\SizeGuideline\app\Models\SizeGuideline::saveData($product, $request->size_chart_title,$request->size_chart_information);
+                                $product_stock = ProductVariant::where('product_id', $product->id)->where('variant', $str)->first();
+                                if ($product_stock == null) {
+                                    $product_stock = new ProductVariant;
+                                    $product_stock->product_id = $product->id;
+                                }
+
+                                $theme_name = APP_THEME();
+                                if ($request['downloadable_product_' . str_replace('.', '_', $str)]) {
+                                    $fileName = rand(10, 100) . '_' . time() . "_" . $request->file('downloadable_product_' . $str)->getClientOriginalName();
+
+                                    $path1 = Utility::upload_file($request, 'downloadable_product_' . $str, $fileName, $dir, []);
+                                    $product_stock->downloadable_product = $path1['url'];
+                                }
+
+
+                                $var_option = "";
+                                $variation_option = !empty($request['variation_option_' . str_replace('.', '_', $str)]) ? $request['variation_option_' . str_replace('.', '_', $str)] : '';
+
+                                if (is_array($variation_option)) {
+                                    foreach ($variation_option as $option) {
+                                        $var_option .= $option . ",";
+                                    }
+                                }
+
+                                $sku = str_replace(' ', '_', $request->name) . $request['product_sku_' . str_replace('.', '_', $str)];
+                                $product_stock->variant = $str;
+
+                                if ($product_stock->track_stock == 1) {
+                                    $product_stock->stock_status = '';
+                                } else {
+
+                                    $product_stock->stock_status = !empty($request['stock_status_' . str_replace('.', '_', $str)]) ? $request['stock_status_' . str_replace('.', '_', $str)] : '';
+                                }
+
+                                $product_stock->variation_option = $var_option;
+
+                                $product_stock->price = !empty($request['product_sale_price_' . str_replace('.', '_', $str)]) ? $request['product_sale_price_' . str_replace('.', '_', $str)] : 0;
+
+                                $product_stock->variation_price = !empty($request['product_variation_price_' . str_replace('.', '_', $str)]) ? $request['product_variation_price_' . str_replace('.', '_', $str)] : 0;
+                                $product_stock->sku = $sku;
+
+                                $product_stock->stock = !empty($request['product_stock_' . str_replace('.', '_', $str)]) ? $request['product_stock_' . str_replace('.', '_', $str)] : 0;
+
+                                $product_stock->low_stock_threshold = !empty($request['low_stock_threshold_' . str_replace('.', '_', $str)]) ? $request['low_stock_threshold_' . str_replace('.', '_', $str)] : 0;
+
+                                $product_stock->weight = !empty($request['product_weight_' . str_replace('.', '_', $str)]) ? $request['product_weight_' . str_replace('.', '_', $str)] : 0;
+
+                                $product_stock->stock_order_status = !empty($request['stock_order_status_' . str_replace('.', '_', $str)]) ? $request['stock_order_status_' . str_replace('.', '_', $str)] : 0;
+
+                                $product_stock->description = !empty($request['product_description_' . str_replace('.', '_', $str)]) ? $request['product_description_' . str_replace('.', '_', $str)] : '';
+
+                                $product_stock->shipping = !empty($request['shipping_id_' . str_replace('.', '_', $str)]) ? $request['shipping_id_' . str_replace('.', '_', $str)] : 'same_as_parent';
+
+                                $product_stock->theme_id = APP_THEME();
+                                $product_stock->store_id = getCurrentStore();
+                                $product_stock->save();
+
+                                if ($request->default_variant ==  '-' . $str) {
+                                    $product_update = Product::find($product->id);
+                                    $product_update->default_variant_id = $product_stock->id;
+                                    $product_update->save();
+                                }
+
+                                if ($product_stock->stock == 'in_stock') {
+                                    $is_in_stock = true;
+                                }
+                            }
+                            ProductVariant::where('product_id', $product->id)
+                                ->whereNotIn('variant', $com)
+                                ->delete();
+                        }
+                        if (!$is_in_stock) {
+                            $product->stock = 'out_of_stock';
+                        }
+                    } else {
+                        $product->variant_product = 0;
+                    }
                 }
-                if (module_is_active('ProductBarCode')) {
-                    \Modules\ProductBarCode\app\Models\ProductBarCode::saveData($product);
+            }
+
+
+            $firebase_enabled = Utility::GetValueByName('firebase_enabled');
+            if (!empty($firebase_enabled) && $firebase_enabled == 'on') {
+                $fcm_Key = Utility::GetValueByName('fcm_Key');
+                if (!empty($fcm_Key)) {
+                    $NotifyUsers = NotifyUser::where('product_id', $product->id)->get();
+                    if (!empty($NotifyUsers)) {
+                        foreach ($NotifyUsers as $key => $value) {
+                            $User_data = User::find($value->user_id);
+                            if (!empty($User_data->firebase_token)) {
+                                $device_id = $User_data->firebase_token;
+                                $message = 'now ' . $product->name . ' is available in stock';
+                                Utility::sendFCM($device_id, $fcm_Key, $message);
+                                NotifyUser::where('product_id', $product->id)->where('user_id', $User_data->id)->delete();
+                            }
+                        }
+                    }
                 }
-                $msg['flag'] = 'success';
-                $msg['msg'] =__('Product update successfully.');
-                return $msg;
+            }
+            if (module_is_active('SizeGuideline')) {
+
+                \Modules\SizeGuideline\app\Models\SizeGuideline::saveData($product, $request->size_chart_title, $request->size_chart_information);
+            }
+            if (module_is_active('ProductBarCode')) {
+                \Modules\ProductBarCode\app\Models\ProductBarCode::saveData($product);
+            }
+            $msg['flag'] = 'success';
+            $msg['msg'] = __('Product update successfully.');
+            return $msg;
             // }catch(\Exception $e){
             //     dd($e);
             //     $msg['flag'] = 'error';
@@ -1514,23 +1477,24 @@ class ProductController extends Controller
         }
     }
 
-    public function get_slug(Request $request){
+    public function get_slug(Request $request)
+    {
         $result = Product::slugs($request->value);
         return response()->json(['result' => $result]);
-
     }
 
-    public function get_subcategory(Request $request){
+    public function get_subcategory(Request $request)
+    {
         $id = $request->id;
         $value = $request->val;
         $SubCategory = SubCategory::where('maincategory_id', $id)->get();
         $option = '<option value="">' . __('Select Product') . '</option>';
         foreach ($SubCategory as $key => $Category) {
             $select = $value == $Category->id ? 'selected' : '';
-            $option .= '<option value="' . $Category->id . '" '.$select.'>' . $Category->name . '</option>';
+            $option .= '<option value="' . $Category->id . '" ' . $select . '>' . $Category->name . '</option>';
         }
 
-        $select =  '<select class="form-control" data-role="tagsinput" id="subcategory_id" name="subcategory_id">'.$option.'</select>';
+        $select =  '<select class="form-control" data-role="tagsinput" id="subcategory_id" name="subcategory_id">' . $option . '</select>';
         $return['status'] = true;
         $return['html'] = $select;
         return response()->json($return);
@@ -1538,7 +1502,7 @@ class ProductController extends Controller
 
     public function attribute_option(Request $request)
     {
-        $Attribute_option = ProductAttributeOption::where('attribute_id', $request->attribute_id)->where('theme_id',APP_THEME())->where('store_id', getCurrentStore())
+        $Attribute_option = ProductAttributeOption::where('attribute_id', $request->attribute_id)->where('theme_id', APP_THEME())->where('store_id', getCurrentStore())
             ->get()->pluck('terms', 'id')->toArray();
 
         return response()->json($Attribute_option);
@@ -1581,7 +1545,7 @@ class ProductController extends Controller
 
         $combinations = $this->combination($options);
 
-        $Shipping = Shipping::where('theme_id',APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Same as Parent', '');
+        $Shipping = Shipping::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Same as Parent', '');
 
         return view('product.attribute_combinations', compact('combinations', 'input', 'unit_price', 'product_name', 'stock', 'Shipping'));
     }
@@ -1606,9 +1570,9 @@ class ProductController extends Controller
 
     public function attribute_combination_data(Request $request)
     {
-        $product_stock = ProductVariant::where('product_id', $request->id)->where('theme_id',APP_THEME())->where('store_id', getCurrentStore())
+        $product_stock = ProductVariant::where('product_id', $request->id)->where('theme_id', APP_THEME())->where('store_id', getCurrentStore())
             ->get();
-        $Shipping = Shipping::where('theme_id',APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Same as parent', '');
+        $Shipping = Shipping::where('theme_id', APP_THEME())->where('store_id', getCurrentStore())->pluck('name', 'id')->prepend('Same as parent', '');
         return view('product.attribute_combinations_data', compact('product_stock', 'Shipping'));
     }
 
@@ -1643,7 +1607,8 @@ class ProductController extends Controller
         return $result;
     }
 
-    public function file_delete($id){
+    public function file_delete($id)
+    {
 
         $product_img_id = ProductImage::find($id);
         if (File::exists(base_path($product_img_id->image_path))) {
@@ -1691,9 +1656,7 @@ class ProductController extends Controller
         return "true";
     }
 
-    public function collectionAll($storeSlug,Request $request, $list)
-    {
-    }
+    public function collectionAll($storeSlug, Request $request, $list) {}
 
     public function product_price(Request $request, $slug)
     {
@@ -1745,63 +1708,60 @@ class ProductController extends Controller
                 $ProductStock = ProductVariant::where('product_id', $product_id)
                     ->where('variant', $variant_name)
                     ->first();
-                    if ($ProductStock)
-                    {
-                        $stock = !empty($ProductStock->stock) ? $ProductStock->stock : $product->product_stock;
-                        $variationOptions = explode(',', $ProductStock->variation_option);
-                        $option = in_array('manage_stock', $variationOptions);
+                if ($ProductStock) {
+                    $stock = !empty($ProductStock->stock) ? $ProductStock->stock : $product->product_stock;
+                    $variationOptions = explode(',', $ProductStock->variation_option);
+                    $option = in_array('manage_stock', $variationOptions);
 
-                        if ($option == true) {
-                            $stock_status = $ProductStock->stock_order_status;
-                        } else {
-                            $stock_status = $product->stock_order_status;
-                        }
-
-                        if ($stock < $qty && $stock_status == 'not_allow') {
-                            $return['status'] = 'error';
-                            $return['variant_id'] = $ProductStock->id;
-                            $return['message'] = __('Product has been reached max quantity.');
-                        } else {
-                            $sale_price = !empty($ProductStock->price) ? $ProductStock->price : $ProductStock->variation_price;
-
-                            $variation_price = !empty($ProductStock->variation_price) ? $ProductStock->variation_price : $ProductStock->price;
-
-                            $var_price = !empty($sale_price) ? $sale_price : 0;
-
-                            $product_original_price = $product->original_price * $qty;
-                            $product_final_price = $product->final_price * $qty;
-
-                            // $product_original_price = $variation_price * $qty;
-                            // $product_final_price = $var_price * $qty;
-                            if ($option == true) {
-                                $variat_stock = !empty($ProductStock->stock) ? $ProductStock->stock : 0;
-                            }else{
-                                $variat_stock = !empty($ProductStock->stock) ? $ProductStock->stock : $product->product_stock;
-                            }
-                            $data['theme_id'] =  $theme_id;
-                            $data['store_id'] = $store->id;
-                            $data['sub_total'] = $product_final_price;
-                            $data['product_original_price'] = $product_original_price;
-                            $cart_array  = Tax::TaxCount($data);
-
-                            $return['sub_total'] = $product_final_price;
-                            $return['product_original_price'] = $product_original_price;
-                            $return['variant_id'] = $ProductStock->id;
-                            $return['original_price'] = $cart_array['original_price'];
-                            $return['final_price'] = $cart_array['final_price'];
-                            $return['currency_name'] = $cart_array['currency_name'];
-                            $return['currency'] = $cart_array['currency'];
-                            $return['total_tax_price'] = $cart_array['total_tax_price'];
-                            $return['enable_option_data'] = !empty($option) ? $option : '';
-                            $return['stock'] = !empty($variat_stock) ? $variat_stock : 0;
-                            $return['stock_status'] = !empty($ProductStock->stock_status) ? $ProductStock->stock_status : '';
-                            $return['description'] = !empty($ProductStock->description) ? $ProductStock->description : $product->descripion;
-                            $return['variant_name'] = !empty($variant_name) ? $variant_name : '';
-                            return response()->json($return);
-                        }
+                    if ($option == true) {
+                        $stock_status = $ProductStock->stock_order_status;
+                    } else {
+                        $stock_status = $product->stock_order_status;
                     }
 
+                    if ($stock < $qty && $stock_status == 'not_allow') {
+                        $return['status'] = 'error';
+                        $return['variant_id'] = $ProductStock->id;
+                        $return['message'] = __('Product has been reached max quantity.');
+                    } else {
+                        $sale_price = !empty($ProductStock->price) ? $ProductStock->price : $ProductStock->variation_price;
 
+                        $variation_price = !empty($ProductStock->variation_price) ? $ProductStock->variation_price : $ProductStock->price;
+
+                        $var_price = !empty($sale_price) ? $sale_price : 0;
+
+                        $product_original_price = $product->original_price * $qty;
+                        $product_final_price = $product->final_price * $qty;
+
+                        // $product_original_price = $variation_price * $qty;
+                        // $product_final_price = $var_price * $qty;
+                        if ($option == true) {
+                            $variat_stock = !empty($ProductStock->stock) ? $ProductStock->stock : 0;
+                        } else {
+                            $variat_stock = !empty($ProductStock->stock) ? $ProductStock->stock : $product->product_stock;
+                        }
+                        $data['theme_id'] =  $theme_id;
+                        $data['store_id'] = $store->id;
+                        $data['sub_total'] = $product_final_price;
+                        $data['product_original_price'] = $product_original_price;
+                        $cart_array  = Tax::TaxCount($data);
+
+                        $return['sub_total'] = $product_final_price;
+                        $return['product_original_price'] = $product_original_price;
+                        $return['variant_id'] = $ProductStock->id;
+                        $return['original_price'] = $cart_array['original_price'];
+                        $return['final_price'] = $cart_array['final_price'];
+                        $return['currency_name'] = $cart_array['currency_name'];
+                        $return['currency'] = $cart_array['currency'];
+                        $return['total_tax_price'] = $cart_array['total_tax_price'];
+                        $return['enable_option_data'] = !empty($option) ? $option : '';
+                        $return['stock'] = !empty($variat_stock) ? $variat_stock : 0;
+                        $return['stock_status'] = !empty($ProductStock->stock_status) ? $ProductStock->stock_status : '';
+                        $return['description'] = !empty($ProductStock->description) ? $ProductStock->description : $product->descripion;
+                        $return['variant_name'] = !empty($variant_name) ? $variant_name : '';
+                        return response()->json($return);
+                    }
+                }
             } else {
             }
         } else {
@@ -1838,14 +1798,14 @@ class ProductController extends Controller
                         $image_url = ('uploads/cover_image_path') . '/default.jpg';
                     }
 
-                    if ($product->variant_product != '1' ) {
-                        if($product->track_stock == 0) {
+                    if ($product->variant_product != '1') {
+                        if ($product->track_stock == 0) {
                             $quantity = $product->stock_status;
-                            if($product->stock_status == 'in_stock'){
+                            if ($product->stock_status == 'in_stock') {
                                 $quantity = 'In Stock';
-                            }elseif($product->stock_status == 'on_backorder'){
+                            } elseif ($product->stock_status == 'on_backorder') {
                                 $quantity = 'On Backorder';
-                            }else{
+                            } else {
                                 $quantity = 'Out of Stock';
                             }
                         } else {
@@ -1854,7 +1814,7 @@ class ProductController extends Controller
 
                         if ($request->session_key == 'purchases') {
                             $productprice = $product->price != 0 ? $product->price : 0;
-                        } else if ($request->session_key == 'pos_'.getCurrentStore()) {
+                        } else if ($request->session_key == 'pos_' . getCurrentStore()) {
                             $productprice = $product->price != 0 ? $product->price : 0;
                         } else {
                             $productprice = $product->price != 0 ? $product->price : $product->price;
@@ -1866,10 +1826,10 @@ class ProductController extends Controller
                                         <div class="position-relative card">
                                             <img alt="Image placeholder" src="' . asset($image_url) . '" class="card-image avatar hover-shadow-lg" style=" height: 6rem; width: 100%;">
                                             <div class="p-0 custom-card-body card-body d-flex ">
-                                                <div class="card-body my-2 p-2 text-left card-bottom-content">
+                                                <div class="p-2 my-2 text-left card-body card-bottom-content">
                                                 <h6 class="mb-2 text-dark product-title-name">' . $product->name . '</h6>
-                                                <small class="badge badge-primary mb-0">' . $productprice . '</small>
-                                                <small class="top-badge badge badge-danger mb-0">' . $quantity . '</small>
+                                                <small class="mb-0 badge badge-primary">' . $productprice . '</small>
+                                                <small class="mb-0 top-badge badge badge-danger">' . $quantity . '</small>
                                             </div>
                                         </div>
                                     </div>
@@ -1882,20 +1842,19 @@ class ProductController extends Controller
                                     <div class="position-relative card">
                                         <img alt="Image placeholder" src="' . asset($image_url) . '" class="card-image avatar hover-shadow-lg" style=" height: 6rem; width: 100%;">
                                         <div class="p-0 custom-card-body card-body d-flex ">
-                                            <div class="card-body my-2 p-2 text-left card-bottom-content">
+                                            <div class="p-2 my-2 text-left card-body card-bottom-content">
                                                 <h6 class="mb-2 text-dark product-title-name">' . $product->name . '</h6>
-                                                <small class="badge badge-primary mb-0">In Variant</small>
+                                                <small class="mb-0 badge badge-primary">In Variant</small>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div> ';
                     }
-
                 }
                 return Response($output);
             } else {
-                $output = '<div class="card card-body col-12 text-center">
+                $output = '<div class="text-center card card-body col-12">
                     <h5>' . __("No Product Available") . '</h5>
                     </div>';
                 return Response($output);
@@ -1903,7 +1862,7 @@ class ProductController extends Controller
         }
     }
 
-    public function addToCart(Request $request, $id, $session_key, $variant_id =0)
+    public function addToCart(Request $request, $id, $session_key, $variant_id = 0)
     {
         $store_id = Store::where('id', getCurrentStore())->first();
 
@@ -1928,7 +1887,7 @@ class ProductController extends Controller
             $variant = ProductVariant::where('product_id', $id)->where('variant', $request->variants)->first();
             if ($variant) {
                 $productquantity = $variant->stock;
-                if ($session_key ==  'pos_'.getCurrentStore() && $productquantity <= 0) {
+                if ($session_key ==  'pos_' . getCurrentStore() && $productquantity <= 0) {
                     return response()->json(
                         [
                             'code' => 404,
@@ -1939,7 +1898,7 @@ class ProductController extends Controller
                     );
                 }
 
-                if ($session_key == 'pos_'.getCurrentStore()) {
+                if ($session_key == 'pos_' . getCurrentStore()) {
 
                     $productprice = $variant->price != 0 ? $variant->price : 0;
                 } else {
@@ -1947,9 +1906,11 @@ class ProductController extends Controller
                 }
             }
         } else {
-            if ($product->track_stock == 0 && $product->stock_status == 'out_of_stock' ||
+            if (
+                $product->track_stock == 0 && $product->stock_status == 'out_of_stock' ||
                 ($product->track_stock != 0 && isset($settings['out_of_stock_threshold']) && ($product->product_stock < $settings['out_of_stock_threshold']) && $product->stock_order_status == 'not_allow') ||
-                (!$product || ($session_key != 'pos_'.getCurrentStore() ))) {
+                (!$product || ($session_key != 'pos_' . getCurrentStore()))
+            ) {
                 return response()->json(
                     [
                         'code' => 404,
@@ -1961,7 +1922,7 @@ class ProductController extends Controller
             }
 
             $productquantity = $product->product_stock;
-            if ($session_key == 'pos_'.getCurrentStore()) {
+            if ($session_key == 'pos_' . getCurrentStore()) {
 
                 $productprice = $product->price != 0 ? $product->price : 0;
             } else {
@@ -2001,7 +1962,7 @@ class ProductController extends Controller
 
         $carthtml .= '<tr data-product-id="' . $id . '" id="product-id-' . $id . '">
                         <td class="cart-images">
-                            <img alt="Image placeholder" src="' . ($image_url) . '" class="card-image avatar shadow hover-shadow-lg">
+                            <img alt="Image placeholder" src="' . ($image_url) . '" class="shadow card-image avatar hover-shadow-lg">
                         </td>
 
                         <td class="name">' . $productname . '</td>
@@ -2015,13 +1976,13 @@ class ProductController extends Controller
                         </td>
                         <td class="tax">' . $product_tax . '</td>
 
-                        <td class="price">' . (currency_format_with_sym( $productprice, $store_id->id, $store_id->theme_id) ?? SetNumberFormat($productprice)) . '</td>
+                        <td class="price">' . (currency_format_with_sym($productprice, $store_id->id, $store_id->theme_id) ?? SetNumberFormat($productprice)) . '</td>
 
-                        <td class="total_orignal_price">' . (currency_format_with_sym( $subtotal, $store_id->id, $store_id->theme_id) ?? SetNumberFormat($subtotal)). '</td>
+                        <td class="total_orignal_price">' . (currency_format_with_sym($subtotal, $store_id->id, $store_id->theme_id) ?? SetNumberFormat($subtotal)) . '</td>
 
                         <td class="">
                             <form method="post" class="mb-0" action="' . route('remove-from-cart') . '"  accept-charset="UTF-8" id="' . $model_delete_id . '">
-                            <button type="button" class="show_confirm btn btn-sm btn-danger p-2">
+                            <button type="button" class="p-2 show_confirm btn btn-sm btn-danger">
                             <span class=""><i class="ti ti-trash"></i></span>
                             </button>
                                 <input name="_method" type="hidden" value="DELETE">
@@ -2054,8 +2015,7 @@ class ProductController extends Controller
                 ],
             ];
 
-            if ((($product->track_stock != 0 && $originalquantity < $cart[$id]['quantity']) || ($product->track_stock == 0 && $product->stock_status == 'out_of_stock')) && $session_key != 'pos_'.getCurrentStore())
-            {
+            if ((($product->track_stock != 0 && $originalquantity < $cart[$id]['quantity']) || ($product->track_stock == 0 && $product->stock_status == 'out_of_stock')) && $session_key != 'pos_' . getCurrentStore()) {
                 return response()->json(
                     [
                         'code' => 404,
@@ -2120,7 +2080,7 @@ class ProductController extends Controller
             $cart[$id]["total_orignal_price"]         = $subtotal + $tax;
             $cart[$id]["originalquantity"] = $originalquantity;
             $cart[$id]["tax"]      = $tax_price;
-            if ((($product->track_stock != 0 && $originalquantity < $cart[$id]['quantity']) || ($product->track_stock == 0 && $product->stock_status == 'out_of_stock')) && $session_key != 'pos_'.getCurrentStore()) {
+            if ((($product->track_stock != 0 && $originalquantity < $cart[$id]['quantity']) || ($product->track_stock == 0 && $product->stock_status == 'out_of_stock')) && $session_key != 'pos_' . getCurrentStore()) {
                 return response()->json(
                     [
                         'code' => 404,
@@ -2162,7 +2122,7 @@ class ProductController extends Controller
             "variant_name" => $product->variant_attribute,
             "return" => 0,
         ];
-        if ((($product->track_stock != 0 && $originalquantity < $cart[$id]['quantity']) || ($product->track_stock == 0 && $product->stock_status == 'out_of_stock')) && $session_key != 'pos_'.getCurrentStore()) {
+        if ((($product->track_stock != 0 && $originalquantity < $cart[$id]['quantity']) || ($product->track_stock == 0 && $product->stock_status == 'out_of_stock')) && $session_key != 'pos_' . getCurrentStore()) {
             return response()->json(
                 [
                     'code' => 404,
@@ -2243,7 +2203,7 @@ class ProductController extends Controller
                 $cart[$id]["total_orignal_price"] = $subtotal;
             }
 
-            if (isset($cart[$id]) && isset($cart[$id]["originalquantity"]) < $cart[$id]['quantity'] && $session_key == 'pos_'.getCurrentStore()) {
+            if (isset($cart[$id]) && isset($cart[$id]["originalquantity"]) < $cart[$id]['quantity'] && $session_key == 'pos_' . getCurrentStore()) {
                 return response()->json(
                     [
                         'code' => 404,
@@ -2257,7 +2217,7 @@ class ProductController extends Controller
             $subtotal = array_sum(array_column($cart, 'total_orignal_price'));
             $discount = $request->discount;
             $total = $subtotal - (float)$discount;
-            $totalDiscount = currency_format_with_sym( $total, $store_id->id, $store_id->theme_id) ?? SetNumberFormat($total);
+            $totalDiscount = currency_format_with_sym($total, $store_id->id, $store_id->theme_id) ?? SetNumberFormat($total);
             $discount = $totalDiscount;
 
 
@@ -2351,38 +2311,36 @@ class ProductController extends Controller
                 'variant_id' => $variant_id
             ]
         );
-
     }
 
     public function VariantDelete(Request $request, $id, $product_id)
     {
         // if(\Auth::user()->can('Delete Variants')){
-            $product = Product::find($product_id);
-            if (!empty($product->variants_json) && ProductVariantOption::find($id)->exists()) {
-                $var_json = json_decode($product->variants_json, true);
+        $product = Product::find($product_id);
+        if (!empty($product->variants_json) && ProductVariantOption::find($id)->exists()) {
+            $var_json = json_decode($product->variants_json, true);
 
-                $i = 0;
-                foreach ($var_json[0] as $key => $value) {
-                    $var_ops = explode(' : ', ProductVariantOption::find($id)->name);
-                    $count = ProductVariantOption::where('product_id', $product->id)->where('name', 'LIKE', '%' . $var_ops[0] . '%')->count();
-                    if ($count == 1 && $i == 0) {
-                        $unsetIndex = array_search($var_ops[0], $var_json[0]['variant_options'], true);
-                        unset($var_json[0]['variant_options'][$unsetIndex]);
-                    }
-                    $i++;
+            $i = 0;
+            foreach ($var_json[0] as $key => $value) {
+                $var_ops = explode(' : ', ProductVariantOption::find($id)->name);
+                $count = ProductVariantOption::where('product_id', $product->id)->where('name', 'LIKE', '%' . $var_ops[0] . '%')->count();
+                if ($count == 1 && $i == 0) {
+                    $unsetIndex = array_search($var_ops[0], $var_json[0]['variant_options'], true);
+                    unset($var_json[0]['variant_options'][$unsetIndex]);
                 }
-                $variants = ProductVariantOption::where('product_id',$product->id)->count();
-                if($variants == 1){
-                    $product->variants_json = '{}';
-                    $product->update();
-                }else{
-                    $product->variants_json = json_encode($var_json);
-                    $product->update();
-                }
-
+                $i++;
             }
-            ProductVariantOption::find($id)->delete();
-            return redirect()->back()->with('success', __('Variant successfully deleted.'));
+            $variants = ProductVariantOption::where('product_id', $product->id)->count();
+            if ($variants == 1) {
+                $product->variants_json = '{}';
+                $product->update();
+            } else {
+                $product->variants_json = json_encode($var_json);
+                $product->update();
+            }
+        }
+        ProductVariantOption::find($id)->delete();
+        return redirect()->back()->with('success', __('Variant successfully deleted.'));
         // }
         // else{
         //     return redirect()->back()->with('error', 'Permission denied.');

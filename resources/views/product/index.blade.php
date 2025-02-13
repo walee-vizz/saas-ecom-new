@@ -16,20 +16,18 @@
 @endsection
 
 @section('action-button')
-{{-- @permission('Create Product') --}}
+    {{-- @permission('Create Product') --}}
     <div class="text-end d-flex all-button-box justify-content-md-end justify-content-center">
         <a href="{{ route('product.create') }}" class="btn btn-sm btn-primary" data-title="Create New Store"
             data-toggle="tooltip" title="{{ __('Create New Store') }}">
             <i class="ti ti-plus"></i>
         </a>
     </div>
-{{-- @endpermission --}}
+    {{-- @endpermission --}}
 @endsection
 
 @push('custom-script')
-    <script>
-
-    </script>
+    <script></script>
 @endpush
 
 @section('content')
@@ -69,37 +67,40 @@
                                         </td>
                                         <td>{{ !empty($product->label) ? $product->label->name : '-' }}
                                         </td>
-                                        <td> <img src="{{ get_file($product->cover_image_path, APP_THEME()) }}"
+                                        {{-- @dd($product?->cover_image_path, get_file($product?->cover_image_path, APP_THEME())) --}}
+                                        <td> <img
+                                                src="{{ $product?->cover_image_path ? get_file($product?->cover_image_path, APP_THEME()) : '' }}"
                                                 alt="" width="100" class="cover_img{{ $product->id }}"> </td>
                                         <td> {{ $product->variant_product == 1 ? 'has variant' : 'no variant' }} </td>
-                                        <td> <i class="ti ti-star text-warning "></i>{{ $product->average_rating}} </td>
+                                        <td> <i class="ti ti-star text-warning "></i>{{ $product->average_rating }} </td>
                                         @if ($product->variant_product == 0)
-                                        <td>{{  currency_format_with_sym($product->price, auth()->user()->current_store, APP_THEME()) ?? SetNumberFormat($product->price) }} </td>
+                                            <td>{{ currency_format_with_sym($product->price, auth()->user()->current_store, APP_THEME()) ?? SetNumberFormat($product->price) }}
+                                            </td>
                                         @else
-                                        <td>{{ __('In Variant') }}</td>
+                                            <td>{{ __('In Variant') }}</td>
                                         @endif
                                         <td>
                                             @if ($product->variant_product == 1)
                                                 <span
-                                                    class="badge badge-80 rounded p-2 f-w-600  bg-light-warning">{{ __('In Variant') }}</span>
+                                                    class="p-2 rounded badge badge-80 f-w-600 bg-light-warning">{{ __('In Variant') }}</span>
                                             @else
                                                 @if ($product->track_stock == 0)
                                                     @if ($product->stock_status == 'out_of_stock')
-                                                        <span class="badge badge-80 rounded p-2 f-w-600  bg-light-danger">
+                                                        <span class="p-2 rounded badge badge-80 f-w-600 bg-light-danger">
                                                             {{ __('Out of stock') }}</span>
                                                     @elseif ($product->stock_status == 'on_backorder')
-                                                        <span class="badge badge-80 rounded p-2 f-w-600  bg-light-warning">
+                                                        <span class="p-2 rounded badge badge-80 f-w-600 bg-light-warning">
                                                             {{ __('On Backorder') }}</span>
                                                     @else
-                                                        <span class="badge badge-80 rounded p-2 f-w-600  bg-light-primary">
+                                                        <span class="p-2 rounded badge badge-80 f-w-600 bg-light-primary">
                                                             {{ __('In stock') }}</span>
                                                     @endif
                                                 @else
                                                     @if ($product->product_stock <= (isset($admin['out_of_stock_threshold']) ? $admin['out_of_stock_threshold'] : 0))
-                                                        <span class="badge badge-80 rounded p-2 f-w-600  bg-light-danger">
+                                                        <span class="p-2 rounded badge badge-80 f-w-600 bg-light-danger">
                                                             {{ __('Out of stock') }}</span>
                                                     @else
-                                                        <span class="badge badge-80 rounded p-2 f-w-600  bg-light-primary">
+                                                        <span class="p-2 rounded badge badge-80 f-w-600 bg-light-primary">
                                                             {{ __('In stock') }}</span>
                                                     @endif
                                                 @endif
@@ -120,30 +121,30 @@
                                         </td>
                                         <td class="text-end">
                                             {{-- @permission('Edit Products') --}}
-                                                {{-- <button class="btn btn-sm btn-info me-2"
+                                            {{-- <button class="btn btn-sm btn-info me-2"
                                                     data-url="{{ route('product.image.form', $product->id) }}"
                                                     data-size="md" data-ajax-popup="true"
                                                     data-title="{{ __('Edit Product Image') }}">
-                                                    <i class="ti ti-camera py-1" data-bs-toggle="tooltip"
+                                                    <i class="py-1 ti ti-camera" data-bs-toggle="tooltip"
                                                         title="{{ __('Edit Product Image') }}"></i>
                                                 </button>
                                                 @endpermission --}}
-                                                {{-- @permission('Edit Products') --}}
-                                                <a href="{{ route('product.edit', $product->id) }}" class="btn btn-sm btn-primary me-2"
-                                                         data-title="{{ __('Edit Product') }}">
-                                                    <i class="ti ti-pencil py-1" data-bs-toggle="tooltip" title="edit"></i>
-                                                </a>
-                                                {{-- @endpermission --}}
-                                                {{-- @permission('Delete Products') --}}
-                                                {!! Form::open([
-                                                    'method' => 'DELETE',
-                                                    'route' => ['product.destroy', $product->id],
-                                                    'class' => 'd-inline',
-                                                ]) !!}
-                                                <button type="button" class="btn btn-sm btn-danger show_confirm">
-                                                    <i class="ti ti-trash text-white py-1"></i>
-                                                </button>
-                                                {!! Form::close() !!}
+                                            {{-- @permission('Edit Products') --}}
+                                            <a href="{{ route('product.edit', $product->id) }}"
+                                                class="btn btn-sm btn-primary me-2" data-title="{{ __('Edit Product') }}">
+                                                <i class="py-1 ti ti-pencil" data-bs-toggle="tooltip" title="edit"></i>
+                                            </a>
+                                            {{-- @endpermission --}}
+                                            {{-- @permission('Delete Products') --}}
+                                            {!! Form::open([
+                                                'method' => 'DELETE',
+                                                'route' => ['product.destroy', $product->id],
+                                                'class' => 'd-inline',
+                                            ]) !!}
+                                            <button type="button" class="btn btn-sm btn-danger show_confirm">
+                                                <i class="py-1 text-white ti ti-trash"></i>
+                                            </button>
+                                            {!! Form::close() !!}
                                             {{-- @endpermission --}}
                                         </td>
                                     </tr>
@@ -157,12 +158,9 @@
     </div>
 @endsection
 @push('custom-script')
-
-@if ($msg != 0 )
-<script>
-show_toastr('{{ __('Success') }}', '{!! $msg !!}', 'success');
-</script>
-@endif
-
+    @if ($msg != 0)
+        <script>
+            show_toastr('{{ __('Success') }}', '{!! $msg !!}', 'success');
+        </script>
+    @endif
 @endpush
-
