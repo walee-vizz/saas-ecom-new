@@ -34,7 +34,8 @@ if (!function_exists('getMenu')) {
     {
         $user = auth()->user();
         $role = $user->type ?? null;
-        $menu = new \App\Classes\Menu($user);
+        $menu = new \App\Classes\Menu(($user));
+        // dd($menu, $user);
         if ($role && $role == 'super admin') {
             event(new \App\Events\SuperAdminMenuEvent($menu));
         } else {
@@ -43,7 +44,7 @@ if (!function_exists('getMenu')) {
         // $dashboardItem = collect($menu->menu)->first(function ($item) {
         //     return $item['parent'] === 'dashboard';
         // });
-        // dd($dashboardItem['route']);
+        // dd($menu->menu);
         return generateMenu($menu->menu, null);
     }
 }
@@ -59,6 +60,9 @@ if (!function_exists('generateMenu')) {
         usort($filteredItems, function ($a, $b) {
             return $a['order'] - $b['order'];
         });
+        // Remove duplicates
+        $filteredItems = array_map("unserialize", array_unique(array_map("serialize", $filteredItems)));
+        // dd($filteredItems);
 
         foreach ($filteredItems as $item) {
             $hasChildren = hasChildren($menuItems, $item['name']);

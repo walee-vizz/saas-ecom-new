@@ -300,9 +300,9 @@
                                             <tr>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <a href="{{ get_file($latest->cover_image_path, APP_THEME()) }}"
+                                                        <a href="{{ $latest?->cover_image_path ? get_file($latest?->cover_image_path, APP_THEME()) : '' }}"
                                                             target="_blank">
-                                                            <img src="{{ get_file($latest->cover_image_path, APP_THEME()) }}"
+                                                            <img src="{{ $latest?->cover_image_path ? get_file($latest?->cover_image_path, APP_THEME()) : '' }}"
                                                                 class="wid-25" alt="images">
                                                         </a>
                                                         <div class="ms-3">
